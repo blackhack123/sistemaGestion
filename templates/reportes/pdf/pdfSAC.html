@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC>
+<html lang="es-Es">
+    <!--
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=spa"/>
+-->
+    <meta charset="ISO/UTF-8"/>
+    <meta name="keywords" content="HTML"/>
+    <title>SAC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+    td,tr 
+{
+    height: auto;
+    width:auto;
+    text-align:center; 
+    vertical-align:middle; 
+    padding-top:2px; /* Agrega margen superior en td*/
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 10px;
+    vertical-align:middle;
+    /*background-color:#F0FDFD;*/
+    background-color:#E1DEDC
+}
+
+
+</style>
+<h3 style="text-align:center;  font-family:Times New Roman; ">SOLICITUD DE ACCIÓN CORRECTIVA / PREVENTIVA N° {{ numero_sac }}</h3>
+{% if sac_anterior %}
+    <h4 style="text-align:center;  font-family:Times New Roman; ">SAC Vinculada N° {{ sac_anterior }}</h4>
+{% endif %}
+    <!-- ENCABEZADO SAC-->
+    <table border="1">
+        
+        {% for encabezado in encabezado_sac %}     
+        <tr>
+            <td class="customTableHeader">TIPO:</td>
+            {% if encabezado.tipo_solicitud == '0' %}
+                <td>AUDITORÍA INTERNA</td>
+            {% endif %}
+            {% if encabezado.tipo_solicitud == '1' %}
+                <td>MEJORAMIENTO</td>
+            {% endif %}
+            {% if encabezado.tipo_solicitud == '2' %}
+                <td>SUGERENCIA</td>
+            {% endif %}
+            <td class="customTableHeader">CRITICIDAD</td>
+            <td>{{ encabezado.criticidad }}</td>
+        </tr>
+        <tr>
+            <td class="customTableHeader">PROCESO:</td>
+            <td>{{ encabezado.proceso }}</td>
+            <td class="customTableHeader">RESPONSABLE:</td>
+            <td>{{ encabezado.responsable }}</td>
+        </tr>
+        <tr>
+            <td class="customTableHeader">SOLICITANTE:</td>
+            <td>{{ encabezado.solicitante }}</td>
+            <td class="customTableHeader">FECHA:</td>
+            <td>{{ encabezado.fecha_solicitud }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </br>
+    <table border="1">
+        {% for encabezado in encabezado_sac %}
+        <tr>
+            <td class="customTableHeader" colspan="2">DESCRIPCIÓN DEL HALLAZGO O LA NO CONFORMIDAD</td>
+        </tr>
+        <tr>
+            <td colspan="2">{{ encabezado.descripcion_hallazgo | safe}}</td>
+        </tr>
+        <tr>
+            <td class="customTableHeader" colspan="2">DESCRIPCIÓN DE LA CORRECCIÓN INMEDIATA TOMADA</td>
+        </tr>
+        <tr> 
+            {% if encabezado.descripcion_correcion %}
+                <td colspan="2">{{ encabezado.descripcion_correcion | safe }}</td>
+            {% else %}
+                <td colspan="2"></td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td class="customTableHeader" colspan="2">ANÁLISIS DE CAUSA</td>
+        </tr>
+        <tr>
+            <td colspan="2">{{ encabezado.analisis_causa | safe }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</br>
+    <table border="1">
+        <tr>
+            <td class="customTableHeader" colspan="3">ACCIÓN A DESARROLLAR</td>
+            <td class="customTableHeader" colspan="2">SEGUIMIENTO</td>
+        </tr>
+        <thead>
+            <tr>
+                <th class="customTableHeader">Detalle</th>
+                <th class="customTableHeader">Plazo</th>
+                <th class="customTableHeader">Responsable</th>
+                <th class="customTableHeader">Fecha</th>
+                <th class="customTableHeader">Responsable</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plan in plan_accion_sac %}
+            <tr>
+                <td>{{ plan.detalle_plan_accion}}</td>
+                <td>{{ plan.plazo_plan_accion}}</td>
+                <td>{{ plan.responsable_plan}}</td>
+
+                <td>{{ plan.fecha_seguimiento}}</td>
+                <td>{{ plan.personal_seguimiento}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <table border="1">
+        <tr>
+            <td class="customTableHeader" colspan="4">APROBACIÓN DEL PLAN DE ACCIÓN</td>
+        </tr>
+        <tr>
+            <td class="customTableHeader" colspan="2">ESTADO</td>
+            <td class="customTableHeader" colspan="2"></td>
+        </tr>
+        <thead>
+            <tr>
+                <th class="customTableHeader">APROBADO</th>
+                <th class="customTableHeader">POR CORREGIR</th>
+                <th class="customTableHeader">FECHA</th>
+                <th class="customTableHeader">NOMBRE Y FIRMA DE LIDER</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for estado in estado_sac %}
+                <tr>
+                    <td>
+                        {% if estado.estado_aprobacion == "1"%}
+                            <strong>X</strong>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if estado.estado_aprobacion == "0"%}
+                            <strong>X</strong>
+                        {% endif %} 
+                    </td>
+                    <td>{{ estado.fecha_aprobacion }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="customTableHeader" colspan="4">OBSERVACIONES</td>
+                </tr>
+                <tr>
+                    {% if  estado.observaciones_aprobacion %}
+                        <td colspan="4"> {{ estado.observaciones_aprobacion }}</td>
+                    {% else %}
+                        <td colspan="4"></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <table border="1">
+        <tr>
+            <td class="customTableHeader" colspan="4">CIERRE EFECTIVO DE LA ACCIÓN</td>
+        </tr>
+        <thead>
+            <tr>
+                <th  class="customTableHeader">IMPLEMENTADA Y EFECTIVA</th>
+                <th  class="customTableHeader">IMPLEMENTADA Y NO EFECTIVA</th>
+                <th  class="customTableHeader">NO IMPLEMENTADA </th>
+                <th  class="customTableHeader">FECHA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for estado in  estado_sac %}
+                <tr>
+                    <!--ESTADO CIERRE -->
+                    {% if estado.estado_cierre_accion == "1"  %}
+                        <td><strong>X</strong></td>
+                        <td></td>
+                        <td></td>
+                    {% elif estado.estado_cierre_accion == "2" %}
+                        <td></td>
+                        <td><strong>X</strong></td>
+                        <td></td>
+                        <td></td>
+                    {% elif estado.estado_cierre_accion == "3" %}
+                        <td></td>
+                        <td></td>
+                        <td><strong>X</strong></td>
+                    {% endif %}
+                    <td>{{ estado.fecha_cierre_accion}}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td  class="customTableHeader" colspan="2">NOMBRE Y FIRMA DE AUDITOR INTERNO</td>
+                <td  class="customTableHeader" colspan="2">NOMBRE Y FIRMA LIDER </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- SALTOS DE LINEA -->
+    <br><br><br><br>
+    <table border="1">
+        {% if firma_auditor and firma_director %}
+        <tr>
+            <td><img src="{{ firma_auditor }}" alt="" width="50" height="50"></td>
+            <td><img src="{{ firma_director }}" alt="" width="50" height="50"></td>
+        </tr>
+        {% else %}
+        <tr>
+            <td>&nbsp;&nbsp;</td>
+            <td>&nbsp;&nbsp;</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td class="customTableHeader">FIRMA DE AUDITOR</td>
+            <td class="customTableHeader">FIRMA JEFE DE AREA</td>
+        </tr>
+
+    </table>
+
+</body>
+</html>

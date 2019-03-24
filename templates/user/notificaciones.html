@@ -1,0 +1,78 @@
+<!-- NOTIFICACIONES -->
+<li class="header">Notificaciones:</li>
+<li>
+    <ul class="menu">
+        <!-- NOTIFICACIONES COLABORADOR -->
+
+        <!-- SEGUIMIENTOS PENDIENTES -->
+        {% if request.session.notificacionSeguimiento %}
+        <li>
+            <a href="/colSeguimientos" title="Colaborador">
+              <i class="fa fa-street-view text-green"></i>Seguimiento(s) pendiente(s)
+            </a>
+        </li>
+        {% endif %}
+        <!-- DOCUMENTOS PENDIENTES -->
+        {% if request.session.notificacionDocumentosPendientes %}
+        <li>
+            {%for proceso in request.session.notificacionDocumentosPendientes %}
+            <a href="/estadoDocColaborador" title="Colaborador">
+              <i class="fa fa-cloud-upload text-aqua"></i>Proceso ({{ proceso.proceso }}) pendiente
+            </a>
+            {% endfor %}
+        </li>
+        {% endif %}
+        <!-- PLAN DE ACCION/SEGUIMIENTO PENDIENTE -->
+        {% if request.session.notificacionPlanAccion %}
+        <li>
+            <a href="/estadoDocColaborador" title="Colaborador">
+              <i class="fa fa-calendar-check-o text-yellow"></i>Acción/Seguimiento pendiente
+            </a>
+        </li>
+        {% endif %}
+
+
+         <!-- NOTIFICACIONES ADMINISTRADOR -->
+
+        <!-- SACS PENDIENTES -->
+        {% if  request.session.notificacionJefe %}
+        <li>
+            <a href="/jefe" title="Director de Área">
+                <i class="fa fa-clone text-green"></i>Sac(s) pendiente(s)
+            </a>
+        </li>
+        {% endif %}
+        <!-- DOCUMENTOS POR REVISAR -->
+        {% if  request.session.notificacionDocPorRevisar %}
+        <li>
+            {% for documento in request.session.notificacionDocPorRevisar %}
+            <a href="/estadoDocJefe" title="Director de Área">
+              <i class="fa fa-info text-red" ></i>Documento ({{documento.nombre}}) pendiente
+            </a>
+            {% endfor %}
+        </li>
+        {% endif %}
+
+
+        <!-- NOTIFICACIONES LIDER DE NORMA-->
+        {% if request.session.notificacionLiderNorma %}
+        <li>
+            {% for documento in request.session.notificacionLiderNorma %}
+            <a href="/estadodoc_lidernorma" title="Lider de Norma">
+                <i class="fa fa-info text-red" ></i>Documento ({{ documento.nombre }}) pendiente
+            </a>
+            {% endfor %}
+        </li>
+        {% endif %}
+
+        <!-- NOTIFICACIONES AUDITOR -->
+        {% if request.session.notificacionAuditor %}
+        <li>
+            <a href="/audiSac">
+                <i class="fa fa-info-circle text-red"></i>SAC Cambios sugeridos
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</li>
+

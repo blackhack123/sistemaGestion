@@ -1,0 +1,83 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Procedimientos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+    td,tr 
+{
+    height: 28px; 
+    width:auto;
+    text-align:center; 
+    /*vertical-align:middle; */
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 12px;
+    vertical-align:middle;
+}
+
+
+</style>
+<h1 style="text-align:center;  font-family:Times New Roman; font-weight: bold;">Reporte General de Procedimientos</h1>
+
+{% if procesos %}
+ <table border="1">
+     <thead>
+         <th width="10%" class="customTableHeader" bgcolor="lightskyblue">#</th>
+         <th  class="customTableHeader" bgcolor="lightskyblue">PROCESO</th>
+         <th  class="customTableHeader" bgcolor="lightskyblue">ENCARGADO DE PROCESO</th>
+         <th  class="customTableHeader" bgcolor="lightskyblue">PROCEDIMIENTO</th>
+     </thead>
+     <tbody>
+      
+        {% for e in procesos %}
+            <tr>
+                <!-- MENSAJE PERSONALIZADO EN BASE AL Estado -->
+                {% if e.estado_procedimiento == "1" %}
+
+                    <td>{{ forloop.counter }}</td>
+                    {% if e.proceso %}
+                        <td>{{ e.proceso }}</td>
+                    {% else %}
+                        <td>--</td>
+                    {% endif %}
+
+                    {% if e.encargado_proceso %}
+                        <td>{{ e.encargado_proceso }}</td>
+                    {% else %}
+                        <td>--</td>
+                    {% endif %}
+                    <td>{{ e.procedimiento }}</td>
+
+                {% elif e.estado_procedimiento == "0" %}
+                    <td >{{ forloop.counter  }}</td>
+                    {% if e.proceso %}
+                        <td style="color:red;">{{ e.proceso }}</td>
+                    {% else %}
+                        <td style="color:red;">--</td>
+                    {% endif %}
+
+                    {% if e.encargado_proceso %}
+                        <td style="color:red;">{{ e.encargado_proceso }}</td>
+                    {% else %}
+                        <td style="color:red;">--</td>
+                    {% endif %}
+                    <td style="color:red;">{{ e.proceso }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+     </tbody>
+ </table>
+ {% else %}
+    <h4 style="text-align:center;">No existen Procedimientos !!</h4>
+ {% endif %}    
+
+</body>
+</html>

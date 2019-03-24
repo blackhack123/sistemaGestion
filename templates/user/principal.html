@@ -1,0 +1,155 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header">
+
+    <!-- Logo -->
+    <span href="" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b><i class="fa fa-cogs"></i> </b></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><img src="{% static 'images/logos/gear6.jpg' %}" width="65" height="41" style="border: 3px solid #ddd; border-radius: 4px;"><b> &nbsp;Menú</span>
+    </span>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Menú de Navegacion</span>
+      </a>
+        <div class="navbar-custom-menu " style="margin-right:40px">
+            <ul class="nav navbar-nav ">
+                <li class="dropdown notifications-menu">
+                     <a href="http://www.rgmanagementcorp.com"  target="_blank">
+                        <img src="{% static 'images/rg/help2.png' %}"  width="60" height="30" style="background-color:white;border: 3px solid #ddd; border-radius: 4px;" >
+                        <span class="label label-danger"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- notificaciones -->
+        <div class="navbar-custom-menu pull-left" style="margin-left:80px">
+            <ul class="nav navbar-nav">
+                <li class="dropdown notifications-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-bell-o"></i>
+                  <span class="label label-danger"><i class="fa fa-info text-white"></i></span>
+                </a>
+                    <ul class="dropdown-menu">
+                    {% include "user/notificaciones.html" %}
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>{{ request.session.nombreUsuario }}</p>
+          <!-- Status -->
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        </div>
+      </div>
+
+    {% include 'user/menu.html' %}
+
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4"><h4>Bienvenido(a) {{ request.session.nombreUsuario }} !!</h4> </div>
+        </div>
+    </section>
+
+
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+{% include "footer.html" %}
+
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+-->
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+
+    <!-- FILE TREE JS -->
+<script src="{% static 'FileTreeJs/jquery.easing.js' %}"></script>
+<script src="{% static 'FileTreeJs/jqueryFileTree.js' %}"></script>
+<link href="{% static 'FileTreeJs/jqueryFileTree.css' %}" rel="stylesheet">
+
+
+</body>
+</html>

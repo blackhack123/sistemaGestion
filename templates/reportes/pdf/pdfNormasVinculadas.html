@@ -1,0 +1,61 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Procesos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+    td,tr 
+{
+    height: 28px; 
+    width:auto;
+    text-align:center; 
+    /*vertical-align:middle; */
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 12px;
+    vertical-align:middle;
+}
+
+
+</style>
+<h1 style="text-align:center;  font-family:Times New Roman; font-weight: bold;">Reporte General de Normas Vinculadas</h1>
+
+{% if normas %}
+ <table border="1">
+     <thead>
+         <th width="10%" class="customTableHeader" bgcolor="lightskyblue">#</th>
+         <th width="150" class="customTableHeader" bgcolor="lightskyblue">Norma</th>
+         <th width="150" class="customTableHeader" bgcolor="lightskyblue">Proceso</th>
+         <th width="150" class="customTableHeader" bgcolor="lightskyblue">Procedimiento</th>
+         <th  class="customTableHeader" bgcolor="lightskyblue">Cláusula</th>
+     </thead>
+     <tbody>
+      
+        {% for e in normas %}
+            <tr>
+                <!-- MENSAJE PERSONALIZADO EN BASE AL Estado -->
+                    <!--
+                    <td>{{ e.id_proceso }}</td>
+                    -->
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ e.nombre_norma }}</td>
+                    <td>{{ e.area }}</td>
+                    <td>{{ e.proceso }}</td>
+                    <td>{{ e.clausula }}</td>
+            </tr>
+        {% endfor %}
+     </tbody>
+ </table>
+ {% else %}
+    <h4 style="text-align:center;">No existen Normas Vinculadas !!</h4>
+ {% endif %}    
+
+</body>
+</html>

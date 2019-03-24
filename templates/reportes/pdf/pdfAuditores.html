@@ -1,0 +1,56 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Areas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+    td,tr 
+{
+    height: 28px; 
+    width:auto;
+    text-align:center; 
+    /*vertical-align:middle; */
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 12px;
+    vertical-align:middle;
+}
+
+
+</style>
+<h1 style="text-align:center;  font-family:Times New Roman; font-weight: bold;">Reporte General de Auditores</h1>
+
+{% if auditores_list %}
+ <table border="1">
+     <thead>
+         <th width="10%" class="customTableHeader" bgcolor="lightskyblue">#</th>
+         <th width="40%" class="customTableHeader" bgcolor="lightskyblue">Auditor</th>
+         <th width="50%" class="customTableHeader" bgcolor="lightskyblue">Norma</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Area</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Proceso</th>
+     </thead>
+     <tbody>
+        {% for e in auditores_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ e.auditor }}</td>
+                <td>{{ e.norma }}</td>
+                <td>{{ e.area }}</td>
+                <td>{{ e.proceso }}</td>
+            </tr>
+        {% endfor %}
+     </tbody>
+ </table>
+ {% else %}
+    <h4 style="text-align:center;">No existen Auditores !!</h4>
+ {% endif %}    
+
+</body>
+</html>

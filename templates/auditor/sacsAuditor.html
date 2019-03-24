@@ -1,0 +1,375 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Gestion de Procesos</title>
+
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="{% static 'adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminLTE/bower_components/font-awesome/css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminLTE/bower_components/Ionicons/css/ionicons.min.css' %}">
+
+  <link rel="stylesheet" href="{% static 'adminLTE/dist/css/AdminLTE.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminLTE/dist/css/skins/skin-blue.min.css' %}">
+
+
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+ <!-- FUENTE DE GOOGLE LOCAL -->
+ <link rel="stylesheet" href="{% static 'adminLTE/dist/css/fontsLocalGoogle.css' %}">
+
+  <!-- Google Font 
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+-->
+      </head>
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+    {% include "auditor/encabezadoAuditor.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>{{ request.session.nombreUsuario }}</p>
+                <!-- Status -->
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- MENU UNIFICADO -->
+        {% include 'user/menu.html' %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                    <li>
+                    <a href="javascript:void(0)"><i class="fa fa-clone"></i>&nbsp;&nbsp;SAC</a>
+                    </li>
+                    <li class="active">
+                        Administrar SAC
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:15px;">
+
+      <!-- CREAR SAC -->
+      <div class="col-md-2">
+          <a href="javascript:void(0);" class="btn btn-primary btn-block btn-sm" onclick="cargarModalSac();">
+              <i class="fa fa-plus">&nbsp;&nbsp;Crear SAC</i>
+          </a>
+      </div>
+
+        <!-- GENERAR SAC -->
+        <div class="col-md-2">
+            <a href="javascript:void(0)" class="btn btn-danger btn-block btn-sm" onclick="cargarModalPDFSac();" id="pdf">
+                <i class="fa fa-file-pdf-o">&nbsp;&nbsp;Generar SAC</i>
+            </a> 
+        </div>
+
+    </div>
+    <div style="widows: 100px; overflow:auto;">
+    <table id="gridSacAuditor" ></table>
+    </div>
+    <div id="pagerSacAuditor" class="text-black"></div>
+
+
+
+    <!-- MODA modalSac -->
+    <div class="modal fade modal-default" id="modalSac">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title badge bg-green">SAC</h4>
+            </div>
+            <div class="modal-body">
+                <form action="" role="form" id="formSac" autocomplete="off">
+                <div class="box-body">
+                    <input type="hidden" id="idSac">
+                    <input type="hidden" id="accion">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="sacAnterior">Vincular SAC</label>
+                                <select name="sacAnterior" id="sacAnterior" class="form-control">
+                                    <option value="" selected disabled>------------</option>
+                                    {% for sac in sacs  %}
+                                      <option value="{{sac.id}}">{{sac.id}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="Numero Auditoria" class="value_required">Número Auditoría:</label>
+                          <select name="numero_auditoria" id="numero_auditoria" class="form-control" onchange="setProceso($(this).val());">
+                            <option selected disabled>Seleccione:</option>
+                            {% for auditoria in auditorias %}
+                              <option value="{{ auditoria.numero_auditoria }}">{{ auditoria.numero_auditoria }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <label for="Areas" class="value_required">Proceso:</label>
+                        <select name="area" id="area" class="form-control" required onchange="setJefeArea($(this).val());" >
+                          <option selected disabled>Seleccione:</option>
+                        </select>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="Jefe de Area" class="value_required">Director de Proceso:</label>
+                          <select name="jefe_area" id="jefe_area" class="form-control" disabled>
+                            <option selected disabled>Seleccione:</option>
+                            {% for jefe in jefes %}
+                              <option value="{{jefe.id}}">{{ jefe.nombre }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Procedimiento" class="value_required">Procedimiento</label>
+                            <select name="procedimiento" id="procedimiento" required class="form-control">
+                                <option selected disabled>Seleccione:</option>
+                            </select>
+                        </div>
+                      </div>
+
+                    </div><!-- END DIV ROW -->
+                    <div class="row">
+                      <div class="col-md-3">
+                        <label for="tiposolicitud" class="value_required">Tipo:</label>
+                        <select name="tipo_solicitud" id="tipo_solicitud" class="form-control">
+                          <option value="0">Auditoria Interna</option>
+                        </select>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="fecha_solicitud" class="value_required">Fecha:</label>
+                            <input type="date" name="fecha_solicitud" id="fecha_solicitud" class="form-control" onclick="validar_fecha();">
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <label for="criticidad" class="value_required">Criticidad:</label>
+                        <select id="criticidad" name="criticidad" class="form-control">
+                          <option value="Mayor">Mayor</option>
+                          <option value="Menor">Menor</option>
+                          <option value="Critico">Critico</option>
+                        </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="responsable" class="value_required">Responsable:</label>
+                          <select name="responsable" id="responsable" class="form-control" disabled>
+                            <option selected disabled>Seleccione:</option>
+                            {% for persona in jefes %}
+                              <option value="{{persona.id}}">{{persona.nombre}}</option>
+                            {% endfor %}
+                          </select>
+                      </div>
+                    </div>
+                    <div class="row" style="display:none">
+                      <div class="col-md-3">
+                          <label for="solicitante" class="value_required">Auditor:</label>
+                          <select name="solicitante" id="solicitante" class="form-control" disabled>
+                            {% for persona in jefes %}
+                              {% if persona.id == solicitante %}
+                                <option value="{{persona.id}}">{{persona.nombre}}</option>
+                              {%endif%}
+                            {% endfor %}
+                          </select>
+                      </div>
+                    </div><!-- END DIV ROW -->
+                    <div class="form-group" >
+                        <label for="descripcion" class="value_required">Descripción del hallazgo o la no conformidad :</label>
+                        <textarea name="sacAuditor" id="sacAuditor" rows="3"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="color:red;">*Campos Obligatorios </label>
+                        </div>
+                    </div>
+                </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="confirmarGrabar();">
+                    <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                </button>
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i> 
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+
+      <!-- MODAL SAC -->
+      <div class="modal fade" id="modalSacPDF" tabindex="-1" role="dialog"  aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <form action="/reporteSac" id="form_sac" method="POST">
+                      {% csrf_token %}
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">GENERAR SAC</span></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      
+                      <div class="form-group">
+                          <label for="SAC" class="value_required">Número de SAC:</label>
+                          <select name="numero_sac" id="numero_sac" class="form-control"> 
+                          {% for sac in sacs  %}
+                              <option value="{{sac.id}}">{{sac.id}}</option>
+                          {% endfor %}
+                          </select>
+                      </div>
+                      
+                  </div>
+                  <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">
+                          <i class="fa fa-file-pdf-o">&nbsp;Generar PDF</i>
+                      </button>
+                      <button type="button" class="btn btn-danger " data-dismiss="modal">
+                          <i class="fa fa-close">&nbsp; Salir</i> 
+                      </button>
+                  </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+
+
+     <!-- MODAL para las  observaciones -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalHallazgo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title badge bg-aqua">DETALLE</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form_hallazgo">
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Detalle:</label>
+                            <textarea id="descripcion" class="form-control" placeholder="Detalle" readonly></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <div class="control-sidebar-bg ">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- CKEDITOR JS -->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+<!-- SWEET ALERT -->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/auditor/sacAuditor.js' %}"></script>
+<script>
+    $("#modalSac #solicitante").val('{{solicitante}}');
+</script>
+</body>
+<style type="text/css">
+    .myAltRowClass { background-color: #BBF3E1; background-image: none; }
+</style >
+</html>

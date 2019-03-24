@@ -1,0 +1,31 @@
+<p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SOLICITUD DE ACCION CORRECTIVA/PREVENTIVA</strong></p>
+
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="height:106px; width:579px">
+	<tbody>
+		<tr>
+			<td><strong>TIPO:</strong></td>
+			<td></td>
+			<td><strong>CRITICIDAD:</strong></td>
+			<td>&nbsp;&nbsp;</td>
+		</tr>
+		<tr>
+			<td><strong>AREA:</strong></td>
+			<td>&nbsp;&nbsp;&nbsp;</td>
+			<td><strong>RESPONSABLE:</strong></td>
+			<td>&nbsp;&nbsp;</td>
+		</tr>
+		<tr>
+			<td><strong>ORIGEN:</strong></td>
+			<td>&nbsp;</td>
+			<td><strong>SOLICITANTE:</strong></td>
+			<td>&nbsp;&nbsp;&nbsp;</td>
+		</tr>
+		<tr>
+			<td><strong>FECHA:</strong></td>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<p><strong>DESCRIPCI&Oacute;N DEL HALLAZGO O LA NO CONFORMIDAD</strong></p>

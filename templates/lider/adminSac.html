@@ -1,0 +1,286 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <style>
+             /*.ui-jqgrid {font-size:0.8em}*/
+             .ui-jqgrid{position:relative;font-size:12px;}
+             .ui-jqgrid .ui-jqgrid-bdiv {
+              position: relative; 
+              margin: 0em; 
+              padding:0; 
+              /*overflow: auto;*/ 
+              overflow-x:visible; 
+              overflow-y:auto; 
+              text-align:left;
+            }
+    </style>
+<div class="wrapper">
+
+  {% include "lider/encabezadoLider.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>{{ request.session.nombreUsuario }}</p>
+                <!-- Status -->
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- MENU UNIFICADO -->
+        {% include 'user/menu.html' %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="javascript:void(0)"><i class="fa fa-clone"></i> SAC</a>
+                    </li>
+                    <li class="active">
+                     Administrar SAC
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <!-- INICIO CONTENIDO DE LA PAGINA -->
+      <div class="row">
+        <div class="col-md-2" style="margin-bottom:10px;">
+            <a href="#" class="btn btn-danger btn-block btn-xs" onclick="modalNumeroAuditoria();" id="pdf">
+                <i class="fa fa-file-pdf-o">&nbsp;&nbsp;Generar Informe</i>
+            </a> 
+        </div>
+
+        <!-- GENERAR SAC -->
+        <div class="col-md-2">
+            <a href="javascript:void(0)" class="btn btn-danger btn-block btn-xs" onclick="cargarModalSac();" id="pdf">
+                <i class="fa fa-file-pdf-o">&nbsp;&nbsp;Generar SAC</i>
+            </a> 
+        </div>
+      </div>
+
+
+      <!-- SACS -->
+
+        <table id="gridSacs" ></table>
+        <div id="pagerSacs" style="color:black;"></div>
+
+
+      <!-- MODAL NUMERO AUDITORIA -->
+      <div class="modal fade" id="modalNumeroAuditoria" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <form action="" id="form_informeAuditoria">
+                {% csrf_token %}
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">GENERAR INFORME DE AUDITORÍA</span> </h5>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                    <label for="Auditoria" class="value_required">Número de Auditoría:</label>
+                    <select name="numero_auditoria" id="numero_auditoria" class="form-control">
+                      {% for auditoria in auditorias %}
+                        <option value="{{ auditoria.numero_auditoria }}">{{ auditoria.numero_auditoria }}</option>
+                      {% endfor%}
+                    </select>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" onclick="getData();">
+                      <i class="fa fa-check-square-o">&nbsp;Aceptar</i>
+                  </button>
+                  <button type="button" class="btn btn-danger " data-dismiss="modal">
+                      <i class="fa fa-close">&nbsp; Salir</i> 
+                  </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
+      <!--MODAL CREAR INFORME -->
+      <div class="modal fade" id="modalCrearInforme" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+          <form action="/pdfInformeAuditoria" method="POST">{% csrf_token %}
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h5 class="modal-title" ><span class="badge bg-green">GENERAR INFORME DE AUDITORÍA</span> </h5>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <textarea name="informe_auditoria" id="informe_auditoria"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">
+                <i class="fa fa-file-pdf-o">&nbsp;Generar PDF</i>
+              </button>
+              <button type="button" class="btn btn-danger " data-dismiss="modal">
+                  <i class="fa fa-close">&nbsp; Salir</i> 
+              </button>
+            </div>
+          </form>
+          </div>
+        </div>
+      </div>
+
+
+
+        <!-- MODAL SAC -->
+        <div class="modal fade" id="modalSac" tabindex="-1" role="dialog"  aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="/reporteSac" id="form_sac" method="POST">
+                        {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">GENERAR SAC</span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <div class="form-group">
+                            <label for="SAC" class="value_required">Número de SAC:</label>
+                            <select name="numero_sac" id="numero_sac" class="form-control"> 
+                            {% for sac in sacs  %}
+                                <option value="{{sac.id}}">{{sac.id}}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-file-pdf-o">&nbsp;Generar PDF</i>
+                        </button>
+                        <button type="button" class="btn btn-danger " data-dismiss="modal">
+                            <i class="fa fa-close">&nbsp; Salir</i> 
+                        </button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+     <!-- MODAL para las  observaciones -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalHallazgo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title"><span class="badge">Detalle</span></h5>
+                </div>
+                <div class="modal-body">
+                    <form id="form_hallazgo">
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Detalle:</label>
+                            <textarea id="descripcion" class="form-control" placeholder="Detalle" maxlength="100" readonly></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+      <!-- FIN DE CONTENIDO DE LA PAGINA -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!--
+<link href="{% static 'jqgrid/css/ui.jqgrid-bootstrap.css' %}" rel="stylesheet">
+-->
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- CKEDITOR JS-->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/lider/lider.js' %}"></script>
+</body>
+<style type="text/css">
+    .myAltRowClass { background-color: #BBF3E1; background-image: none; }
+</style >
+</html>

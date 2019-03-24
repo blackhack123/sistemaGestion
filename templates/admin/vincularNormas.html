@@ -1,0 +1,303 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                    <li>
+                    <a href="javascript:void(0)"><i class="fa fa-book"></i> Normas</a>
+                    </li>
+                    <li class="active">
+                        Vincular Normas
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:15px;">
+
+        <!-- VINCULAR NORMA -->
+        <div class="col-md-2">
+            <a href="#" class="btn btn-primary btn-block btn-sm" onclick="cargarModalVincularNorma();">
+                <i class="fa fa-check">&nbsp;&nbsp;Vincular Norma</i>
+            </a> 
+        </div>
+
+        <!-- GENERAR EXCEL -->
+        <div class="col-md-2">
+            <a href ="/excelNormVinculadas" class="btn btn-success btn-block btn-sm" id="excel">
+                <i class="fa fa-file-excel-o">&nbsp;&nbsp; Generar Excel</i>
+            </a>
+            
+        </div>
+    
+        <!-- GENERAR PDF -->
+        <div class="col-md-2">
+            <a href="/pdfNormVinculadas" class="btn btn-danger btn-block btn-sm" id="pdf">
+                <i class="fa fa-file-pdf-o">&nbsp;&nbsp; Generar Pdf</i>
+            </a>
+        </div>
+            
+            
+    </div>
+    <div class="row">
+        <!-- INPUT BUSCAR -->
+        <div class="col-md-2">
+            <input id="search_cells" type="text" class="form-control input-sm" placeholder="Buscar.."/>
+        </div>
+
+    </div>
+        <!-- GRID USUARIOS-->
+      <div style="widows: 100px; overflow:auto;">
+      <table id="gridNormasVinculadas"></table>
+      </div>
+      <div id="pagerNormasVinculadas" style="color:black"></div>
+
+
+  
+
+
+    <!-- MODA AREA-->
+    <div class="modal fade" id="modalvincularNorma">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-window-close"></i>
+                    </button>
+                        <h4 class="modal-title"><strong>Vincular Normas</strong> </h4>
+                </div>
+                <div class="modal-body">
+                <form id="formVincularNorma"  method="POST" role="form"  autocomplete="off" >
+                    <input type="hidden" id="accion">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="Area" class="value_required">Proceso:</label>
+                                    <select id="id_area" name="id_area" class="form-control" onchange="cargarProcesosPorIdArea($(this).val());">
+                                        <option disabled selected >Seleccione:</option>
+                                        {% for area in areas %}
+                                        <option id="{{area.id}}" value="{{area.id}}">{{area.area}}</option>
+                                        {%  endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="Proceso" class="value_required">Norma:</label>
+                                    <select id="id_norma" class="form-control" onchange="cargarClausulasPorNorma($(this).val());">
+                                        <option disabled selected >Seleccione:</option>
+                                        {% for norma in normas %}
+                                        <option id="{{norma.id}}" value="{{norma.id}}">{{norma.nombre}}</option>
+                                        {%  endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="Procesos" class="value_required">Procedimientos:</label>
+                                    <!-- GRID PROCESOS -->
+                                    <table id="gridProcesosNorma"></table>
+                                    <div id="pagerProcesosNorma" style="color:black"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- GRID CLAUSULAS -->
+                                <label for="Clausulas" class="value_required">Clausulas:</label>
+                                <table id="gridClausulas"></table>
+                                <div id="pagerClausulas" style="color:black"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                                <div class="col-md-4">
+                                    <label style="color:red;">*Campos Obligatorios </label>
+                                </div>
+                        </div>
+   
+    
+                </div>
+                <div class="modal-footer"> <!--onclick="confirmarGrabar(event);" -->
+                    <button type="button" class="btn btn-primary" id="grabar_clausulas">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+    
+                </div>
+            </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    
+
+    <div id="dialogDetalleClausula" title="Detalle">
+        <div class="form-group">
+            <div id="detalle_clausula"></div>
+        </div>
+    </div>
+
+
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+<!-- jquery ui
+<script src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+-->
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- SWEET ALERT-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<!-- VALIDACIONES -->
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!--JQUERY UI
+<link rel="stylesheet" href="{% static 'jquery_1_12_1/jquery-ui.css' %}">
+-->
+<script src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+<script src="{% static 'jquery-ui/ui.dialog.dialogResize.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/normas.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/vincularNormas.js' %}"></script>
+<script>
+
+    var id_norma    = sessionStorage.getItem("id_norma");
+    var id_clausula = sessionStorage.getItem("id_clausula");
+    if( id_norma!= null && id_clausula != null){
+    
+        //abrir modal
+        $("#modalvincularNorma").modal('show');
+        
+        //predefinir la primera area
+        $('select[name=id_area] option:eq(2)').attr('selected', 'selected');
+        var valor = $("#id_area").val();
+        //cargarProcesosPorIdArea(valor);
+
+        //cargar norma seleccionada
+        $("#modalvincularNorma #id_norma").val(id_norma);
+
+        //cargar normas
+        cargarClausulasPorNorma(id_norma);
+
+        //establecer seleccion jqgrid
+        jQuery('#gridClausulas').setGridParam( {gridComplete:function() 
+            {                           
+                var grid = jQuery('#gridClausulas');
+                grid.setSelection(id_clausula,false);
+            }
+        });
+        //console.log(id_clausula);
+        
+        //limpiar variables de session
+        sessionStorage.clear();
+
+    }//end if
+
+    var element = document.getElementById('grabar_clausulas');
+    element.addEventListener('click', confirmar);
+
+    function confirmar() {
+        swal({
+            title: "Desea grabar los Datos ?",
+            icon: "info",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                insertVinculoNorma();
+            }
+        });
+
+    }//end function 
+
+</script>
+</body>
+</html>

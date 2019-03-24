@@ -1,0 +1,138 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                    <li>
+                    <a href="javascript:void(0)"><i class="fa fa-pie-chart"></i> Indicadores</a>
+                    </li>
+                    <li class="active">
+                        Administrar Planificación
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Objetivos Relacionados</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Prioricidad</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Rango de Evaluación</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Conceptos (Otros) Relacionados</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Metas Planeadas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Ejes Ejecutadas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Subir Metas Ejecutadas</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+            </div>
+    
+        
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- CHART-JS -->
+<script src="{% static 'ChartJs/Chart.min.js' %}"></script>
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/indicadores/planificacion.js' %}"></script>
+</body>
+</html>

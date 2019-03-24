@@ -1,0 +1,87 @@
+
+    <div class="tab-pane fade" id="productos" role="tabpanel" aria-labelledby="productos-tab">
+
+        <div class="row"><br>
+            <div class="col-md-2">
+                <a href ="javascript:void(0);" class="btn btn-primary btn-block btn-sm" onclick="cargarModalProducto();" >
+                    <i class="fa fa-plus"> Crear</i>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href ="/excel_producto" class="btn btn-success btn-block btn-sm" id="excel">
+                    <i class="fa fa-file-excel-o"> Reporte Excel</i>
+                </a>
+            </div>
+        </div>                    
+
+        <div class="row">
+            <div class="col-md-12">
+                <table id="gridProductos"></table>
+                <div id="pagerProductos" class="text-black"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- Modal Departamento -->
+    <div class="modal fade" id="modalProducto" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="" id="formProducto" method="post">
+                {% csrf_token %}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="titleProducto"></h4>
+          </div>
+          <div class="modal-body">
+              <input type="hidden" id="productoId" name="productoId">
+              <div class="form-group">
+                  <label for="nombre" class="value_required">Nombre:</label>
+                  <input type="text" class="form-control" name="nombre" id="nombre" required>
+              </div>
+              <div class="form-group">
+                  <label for="descripcion">Descripción:</label>
+                  <textarea name="descripcion" id="descripcion" rows="4" class="form-control"></textarea>
+              </div>
+              <div class="form-group">
+                  <label for="estado" class="value_required">Estado</label>
+                  <select name="estado" id="estado" class="form-control" required>
+                      <option value="1" selected>Activo</option>
+                      <option value="0">Inactivo</option>
+                  </select>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Grabar Datos</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cerrar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal Observacion -->
+    <div class="modal fade" id="modalObservacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title badge bg-green" id="myModalLabel">Detalle</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="observacion" class="value_required">Descripción</label>
+                <textarea name="observacion" id="observacion" rows="5"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>

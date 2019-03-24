@@ -1,0 +1,912 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+=================
+CLASES APLICABLES PARA VARIA EL ESTILO DE PLANTILLA
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  {% include "auditor/encabezadoAuditor.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>{{ request.session.nombreUsuario }}</p>
+                <!-- Status -->
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- MENU UNIFICADO -->
+        {% include 'user/menu.html' %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Documentos para la Auditoría
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+
+        <!-- GRID AUDITORIA DESIGNADA-->
+
+
+    <div class="row">
+        <div class="col-md-2">
+            <button type="button" class="btn btn-warning btn-block btn-sm" data-toggle="modal" data-target="#modalNombreNorma">
+                <i class="fa fa-pencil-square-o">&nbsp;&nbsp;Norma</i>
+            </button>
+        </div>
+        <div class="col-md-2">                        
+            <!-- GENERAR PDF
+            <a href="javascript:void(0);" onclick="modalListaVerificacion();" class="btn btn-danger btn-block btn-sm" id="pdf">
+                <i class="fa fa-check">&nbsp;&nbsp;Lista de Verificación</i>
+            </a>
+             -->
+            <a href="javascript:void(0);" class="btn btn-danger btn-block btn-sm" data-toggle="modal" data-target="#modalCheckList">
+                <i class="fa fa-check">&nbsp;&nbsp;Lista de Verificación</i>
+            </a>
+        </div>
+        <div class="col-md-2">
+                <button type="button" class="btn btn-info btn-block btn-sm" onclick="cargarModalClausula();">
+                    <i class="fa fa-search">&nbsp;&nbsp;Extraer Clausulas</i>
+                </button>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-success btn-block btn-sm" data-toggle="modal" data-target="#modalNumeroAuditoria">
+                <i class="fa fa-pencil-square-o">&nbsp;&nbsp;Plan de Ejecución</i>
+            </button>
+        </div>
+
+    </div>
+
+        <!-- GENERAR PDF 
+        <div class="col-md-3">                        
+            
+            <a href="/selPlanEjec" class="btn btn-success btn-block btn-sm" id="pdf">
+                <i class="fa fa-pencil-square-o">&nbsp;&nbsp;Plan de Ejecucion</i>
+            </a>
+        </div>
+        -->
+
+
+        <!--MODAL NOMBRE DE LA NORMA -->
+        <div class="modal fade" id="modalNombreNorma" tabindex="-1" role="dialog" aria-labelledby="modalNombreNorma" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <form id="form_numeroNorma" >
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">Selecione Norma</span></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="descripcion" class="value_required">Norma:</label>
+                            <select id="id_norma" class="form-control" >
+                                <option disabled selected>Seleccione una Norma:</option>
+                                {% for norma in normas %}
+                                    <option value="{{norma.docfile}}">{{norma.nombre}}</option>
+                                {%  endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="consultarNorma();"><i class="fa fa-check" ></i> Aceptar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="fa fa-close"></i> Cerrar
+                        </button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+
+        <!--MODAL NUMERO AUDITORIA -->
+        <div class="modal fade" id="modalNumeroAuditoria" tabindex="-1" role="dialog" aria-labelledby="modalNumeroAuditoria" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <form id="form_numeroAuditoria" >
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">Plan de Ejecución</span></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="Auditoria" class="value_required">Número de Auditoría</label>
+                            <select name="numero_auditoria" id="numero_auditoria" class="form-control">
+                                {% for auditoria in auditorias %}
+                                <option value="{{ auditoria.numero_auditoria }}">{{ auditoria.numero_auditoria }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="consultarPlanEjecucion();"><i class="fa fa-file-pdf-o" ></i> Generar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="fa fa-close"></i> Cerrar
+                        </button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+
+        <!--modal editar plan de ejecucion -->
+        <div class="modal fade" id="modalPlanEjecucion" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <form action="/pdfPlanEjecucion" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">PLAN DE EJECUCIÓN</span></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="Plan">Plan de Ejecución</label>
+                            <textarea name="plan_ejecucion" id="plan_ejecucion"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-file-pdf-o" ></i> Generar PDF</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="fa fa-close"></i> Cerrar
+                        </button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+
+    <div class="row">
+        <div class="col-md-9">
+            <!-- LISTADO DE DIRECTORIOS HABILIDATOS PARA LA AUDITORIA -->
+            <div class="box box-success " style="margin-top:10px;">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Directorios y Archivos Designados</h3>
+                  <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="box-body">
+                    {% for directorio in archivos_list %}
+                        <!-- LISTADO DE DIRECTORIOS Y ARCHIVOS -->
+                        <div id="directorio_principal_{{forloop.counter}}" ></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+ 
+    <!-- MODAL NUMERO AUDITORIA -->
+    <div class="modal fade" id="modalCheckList" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title badge bg-green" id="myModalLabel">LISTA DE VERIFICACIÓN</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="numero_auditoria">Número de Auditoría</label>
+                <select name="numero_auditoria" id="numero_auditoria" class="form-control" required>
+                    <option value="" selected disabled>---------------</option>
+                    {% for auditoria in auditorias %}
+                    <option value="{{ auditoria.numero_auditoria }}">{{ auditoria.numero_auditoria }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="modalListaVerificacion();">Generar Lista</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <div id="dialogListaVerificacion" title="Lista de Verificación" >
+        <form action="/pdfListVerificacion" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="Lista">Lista de Verificación:</label>
+                <textarea name="lista_verificacion" id="lista_verificacion" rows="10"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-file-pdf-o" ></i> Generar Pdf</button>
+        </form>
+    </div>
+
+
+
+
+    <!-- DIALOG PARA EXTRAER CLAUSUAL -->
+    <div id="dialogExtraer" title="Extraer Cláusula" >
+
+        <div class="form-group">
+            <label for="Norma" class="value_required">Norma:</label>
+            <select name="normas" id="normas" class="form-control">
+                {% for norma in normas_list %}
+                    <option value="{{ norma.id}}">{{norma.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="value_required"> El Pdf es escaneado:</label>
+            <select class="form-control" id="escaneado">
+                <option selected disabled>Seleccione:</option>
+                <option value="1">Si</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+        <div class="form-group" id="div_numeroPagina">
+            <label for="Pagina" class="value_required">Número de Página:</label>
+            <input type="number" id="pagina" name="pagina" class="form-control" required>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="extraerClausula();"> 
+            <i class="fa fa-check-square-o"  id="grabar">&nbsp;Extraer</i>
+        </button>
+    </div>
+
+
+    <!-- DIALOG CLAUSULA EXTRAIDA -->
+    <div id="dialogClausula" title="Cláusula Extraida">
+        <div class="form-group">
+            <label for="Clausula">Cláusula Extraida:</label>
+            <textarea name="clausula" id="clausula" class="form-control" rows="12"></textarea>
+        </div>
+    </div>
+
+<!-- OPCIONES DE APERTURA DE DOCUMENTO -->
+{% include 'abrirDocumento.html' %}
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+<!-- REQUIRED JS SCRIPTS -->
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<script src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+<script src="{% static 'jquery-ui/jquery.dialogextend.js' %}"></script>
+<!--
+<link href="{% static 'jqgrid/css/ui.jqgrid-bootstrap.css' %}" rel="stylesheet">
+-->
+
+
+<!-- CKEDITOR JS-->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- WAIT ME JS-->
+<link rel="stylesheet" href="{% static 'waitMe/waitMe.css' %}">
+<script src="{% static 'waitMe/waitMe.js' %}"></script>
+<!--SWEET ALERT -->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+
+        <!-- FILE TREE JS -->
+<script src="{% static 'FileTreeJs/jquery.easing.js' %}"></script>
+<script src="{% static 'FileTreeJs/jqueryFileTree.js' %}"></script>
+<link href="{% static 'FileTreeJs/jqueryFileTree.css' %}" rel="stylesheet">
+<!-- INDEX JS -->
+<script src="{% static 'module/docAuditor.js' %}"></script>
+</body>
+<script>
+
+//listar directorio y archivos
+{% for directorio in archivos_list %}
+    $('#directorio_principal_{{forloop.counter}}').fileTree({ root: '{{ directorio.ruta_absoluta }}', script: '/dir_list' }, function(file) {
+        $("#modalPermisos").modal('show');
+        $("#modalPermisos #documento").val(file);
+    });
+{% endfor %}
+
+   //INSTANCIAMOS EL CKEDITOR
+   CKEDITOR.replace('lista_verificacion');
+
+   //ESTABLECE FOCUS POPUP CKEDITOR
+   $.fn.modal.Constructor.prototype.enforceFocus = function () {
+       modal_this = this
+       $(document).on('focusin.modal', function (e) {
+           if (modal_this.$element[0] !== e.target && !modal_this.$element.has(e.target).length
+           // add whatever conditions you need here:
+           &&
+           !$(e.target.parentNode).hasClass('cke_dialog_ui_input_select') && !$(e.target.parentNode).hasClass('cke_dialog_ui_input_text')) {
+               modal_this.$element.focus()
+           }
+       })
+   };
+
+
+
+    //limpiar textarea clausula
+    $("#lista_verificacion").val('');
+    
+    //instanciamos dialog lista verificacion
+    $("#dialogListaVerificacion").dialog({
+        autoOpen: false,
+        position: { my: "rigth"},
+        width: 700
+    }).dialogExtend({
+        "minimizable" : true,
+        "dblclick" : "maximize",
+        "icons" : { "maximize" : "ui-icon-arrow-4-diag" ,"minimize" : "ui-icon-circle-minus",}
+
+    });
+
+    //instanciamos el dialog  extraer
+    $( "#dialogExtraer" ).dialog({
+        autoOpen: false,
+        position: { my: "left"},
+    });
+    
+    //limpiar textarea clausula
+    $("#clausula").val('');
+    //instanciamos el dialog clausula extraida
+    $( "#dialogClausula" ).dialog({
+        autoOpen: false,
+        position: { my: "left"},
+        resize: function( event, ui ) {},
+        height: 400,
+        width: 600
+    }).dialogExtend({
+        "minimizable" : true,
+        "dblclick" : "maximize",
+        "icons" : { "maximize" : "ui-icon-arrow-4-diag" ,"minimize" : "ui-icon-circle-minus",}
+
+    });
+
+
+
+    
+   //MOSTRAR MODAL CKEDITOR LISTA VERIFICACION
+    function modalListaVerificacion(){
+
+        //leer plantilla y asignar al CKEDITOR
+       /* fetch('media/plantilla_lista_verificacion.txt')
+            .then(response => response.text())
+            .then(text => 
+            CKEDITOR.instances.lista_verificacion.setData(text)
+        )
+       */
+       var numero_auditoria = $("#modalCheckList #numero_auditoria").val();
+        //token
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+            type: "POST",
+            url: "/select_data_lista/",
+            data:{
+                csrfmiddlewaretoken : csrftoken,
+                numero_auditoria:numero_auditoria,
+            },
+            dataType: "json",
+            success: function(data) {
+                var codigo = data.resultado;
+                if (codigo=="ok_select"){
+                    html ="";
+                    html +="<p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISTA DE VERIFICACION</strong></p> ";
+                    html += '<table border="1" cellpadding="1" cellspacing="1" >';
+                    html += '<tbody>';
+                    html += '<tr>';
+                    html += '<td><p><strong>Auditoria No:</strong></p></td>';
+                    html += '<td>'+data.auditoria+'</td>';
+                    html += '<td><p><strong>Fecha de auditor&iacute;a:</strong></p></td>'
+                    html += '<td>'+data.fec_auditoria+'</td>';
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += '<td><p><strong>Responsable Auditado:</strong></p></td>';
+                    html += '<td>'+data.responsable_auditado+'</td>';
+                    html += '<td><p><strong>Auditor Designado:</strong></p></td>'
+                    html += '<td>'+data.auditor_designado+'</td>';
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += '<td><p><strong>Proceso Auditado:</strong></p></td>';
+                    html += '<td>'+data.proceso+'</td>';
+                    html += '<td><strong>No</strong>________ <strong>de</strong>_____ &nbsp;&nbsp;</td>'
+                    html += '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+                    html += '</tr>';
+                    html += '</tbody></table>';
+                    html += '<br><table border="1" cellpadding="1" cellspacing="1">'
+                    html += '<tbody>';
+                    html += '<td colspan="5" style="text-align:center"><strong>RESULTADO</strong></td>';
+                    html += '<tr>';
+                    html += '<td><strong>REFERENCIA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong></td>';
+                    html += '<td><strong>SOLICITUD-PREGUNTA</strong></td>';
+                    html += '<td><strong>C</strong></td>';
+                    html += '<td><strong>N</strong></td>';
+                    html += '<td><strong>OBSERVACION</strong></td></tr>';
+                    referencia = data.referencias;
+                    for(i=0; i<referencia.length; i++){
+                        html += '<tr>';
+                        html += '<td>'+referencia[i]['clausula']+'</td>';
+                        html += '<td>&nbsp;&nbsp;&nbsp;</td>';
+                        html += '<td>&nbsp;&nbsp;&nbsp;</td>';
+                        html += '<td>&nbsp;&nbsp;&nbsp;</td>';
+                        html += '<td>&nbsp;&nbsp;&nbsp;</td>';
+                        html += '</tr>';
+                    }
+                    html += '</tbody></table>';
+                    html += '<p>&nbsp;</p>';
+                    html += '<table border="1" cellpadding="1" cellspacing="1">';
+                    html += '<tbody>';
+                        html += '<tr>';
+                            html += '<td><strong>Elaborador por:</strong></td>';
+                            html += '<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+                        html += '</tr>';
+                        html += '<tr>';
+                            html += '<td><strong>Fecha:</strong></td>';
+                            html += '<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+                        html += '</tr>';
+                    html += '</tbody>';
+                    html += '</table>';
+                    html += '<p>&nbsp;</p>';
+                    CKEDITOR.instances.lista_verificacion.setData(html)
+                    $("#modalCheckList").modal('hide');
+                    $("#dialogListaVerificacion").dialog('open');
+
+                }//end if
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+
+                if (jqXHR.status === 0) {
+
+                    swal('Not connect: Verify Network.', "", "error");
+
+                } else if (jqXHR.status == 404) {
+
+                    swal('Requested page not found [404]', "", "error");
+
+                } else if (jqXHR.status == 500) {
+
+                    swal('Internal Server Error [500]', "", "error");
+
+                } else if (textStatus === 'parsererror') {
+
+                    swal('Requested JSON parse failed.', "", "error");
+
+                } else if (textStatus === 'timeout') {
+
+                    swal('Time out error', "", "error");
+
+                } else if (textStatus === 'abort') {
+                    swal('Ajax request aborted.', "", "error");
+
+                } else {
+                    swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+
+                }//end if
+
+            }//end error
+        });
+
+
+    }//end function modalListaVerificacion
+
+
+    function descargar_archivo(url_carpeta){
+        
+        //separar los parametros pasados
+        var data=url_carpeta.split(',');
+        //consultar url y abrir
+        abrirAchivo(data[1]);
+
+    }//end function descargar_archivo
+
+
+    function abrirAchivo(path){
+        var hostName=window.location.host+"/"
+        var linkDoc="http://"+hostName+path;
+        window.open(linkDoc, '_blank', 'location=yes,height=600,width=900,scrollbars=yes,status=yes');
+
+    }//end function abrirAchivo
+
+
+    function consultarPlanEjecucion(){
+
+        var numero_auditoria = $("#modalNumeroAuditoria #numero_auditoria").val();
+        if(numero_auditoria == "" || numero_auditoria ==null){
+            swal("Seleccione el numero de Auditoria !!", "", "warning");
+            return false;
+        }
+
+        //token
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+            type: "POST",
+            url: "/selPlanEjec/",
+            data:{
+                csrfmiddlewaretoken : csrftoken, 
+                numero_auditoria:numero_auditoria,
+            },
+            dataType: "json",
+            success: function(data) {
+
+                //data retornante
+                alcance = data.alcances;
+                objetivo = data.objetivos;
+                alcances = data.alcances;
+                criterio = data.procesos_list;
+                detalle = data.detalle_list;
+                lider = data.auditorLider_list;
+
+                //codigo nuevos carlos
+                var html ='<p style="text-align: center;"><strong>PLAN PARA LA EJECUCIÓN DE LA AUDITORÍA</strong></p>';
+                html = html + '<table border="1" cellpadding="1" cellspacing="1" style="width:500px">';
+                html = html + '<tbody>';
+                html = html + '<tr>';
+                html = html + '<td>';
+                html = html + '<table border="0">';
+                html = html + '<tbody>';
+                html = html + '<tr>';
+                html = html + '<td style="width:175px"><strong>AUDITORÍA INTERNA N&deg;:</strong></td>';
+                html = html + '<td>'+data.auditoria+'</td>';
+                html = html + '<td style="width:80px"><strong>FECHA:</strong></td>';
+                html = html + '<td>'+data.fechaActual+'</td>';
+                html = html + '</tr>';
+                html = html + '</tbody>';
+                html = html + '</table>';
+
+                html = html + '<table>';
+                html = html + '<tbody>';
+                html = html + '<tr>';
+                html = html + '<td style="width:110px"><strong>OBJETIVO:</strong></td>';
+                html = html + '<td>';
+                for(i=0; i<objetivo.length; i++){
+                  html = html + objetivo[i]['objetivo']+ ' , ';
+                }
+                html = html +'</td>';
+                html = html + '</tr>';
+                html = html + '</tbody>';
+                html = html + '</table>';
+
+                html = html + '<table>';
+                html = html + '<tbody>';
+                html = html + '<tr>';
+                html = html + '<td style="width:110px"><strong>ALCANCE:</strong></td>';
+                html = html + '<td>'
+                for(i=0; i<alcances.length; i++){
+                  html = html + alcances[i]['area']+ ' , ';
+                }
+                html = html +'</td>';
+                html = html + '</tr>';
+                html = html + '</tbody>';
+                html = html + '</table>';
+
+                html = html + '<table>';
+                html = html + '<tbody>';
+                html = html + '<tr>';
+                html = html + '<td style="width:110px"><strong>AUDITOR LÍDER:</strong></td>';
+                html = html + '<td>' +lider[0]['nombre']+'</td>';
+                html = html + '</tr>';
+                html = html + '</tbody>';
+                html = html + '</table>';
+
+                html = html + '<table>';
+                html = html + '<tbody>';
+                html = html + '<tr>';
+                html = html + '<td style="width:200px"><strong>CRITERIO DE LA AUDITORÍA:</strong></td>';
+                html = html + '<td>';
+                for(i=0; i<criterio.length; i++){
+                  html = html + criterio[i]['proceso']+ ' , ';
+                }
+                html = html + '</td>';
+                html = html + '</tr>';
+                html = html + '</tbody>';
+                html = html + '</table>';
+                html = html + '</td>';
+                html = html + '</tr>';
+                html = html + '</tbody>';
+                html = html + '</table>';
+
+                html = html + '<p>&nbsp;</p>';
+
+                html = html + '<table border="1" cellpadding="1" cellspacing="1" style="width:600px">';
+                html = html + '<tbody>';
+                html = html + '<tr>';
+                html = html + '<td style="text-align:center"><strong>PROCEDIMIENTO</strong></td>';
+                html = html + '<td style="text-align:center"><strong>NORMA</strong></td>';
+                html = html + '<td style="text-align:center"><strong>CLÁUSULA</strong></td>';
+                html = html + '<td style="text-align:center"><strong>AUDITOR</strong></td>';
+                html = html + '<td style="text-align:center"><strong>AUDITADO</strong></td>';
+                html = html + '<td style="text-align:center"><strong>FECHA</strong></td>';
+                html = html + '<td style="text-align:center"><strong>HORARIO</strong></td>'
+                html = html + '</tr>';
+                for(i=0; i<detalle.length; i++){
+                  html = html + '<tr>';
+
+                  html = html + '<td style="text-align:center">'+detalle[i]['procedimiento']+'</td>';
+                  html = html + '<td style="text-align:center">'+detalle[i]['norma']+'</td>';
+                  html = html + '<td style="text-align:center">'+detalle[i]['clausula']+'</td>';
+                  html = html + '<td style="text-align:center">'+detalle[i]['auditor']+'</td>';
+                  html = html + '<td style="text-align:center">'+detalle[i]['auditado']+'</td>';
+                  html = html + '<td style="text-align:center">'+detalle[i]['fec_inicio']+'</td>';
+                  html = html + '<td style="text-align:center">'+detalle[i]['hora_inicio']+'</td>';
+                  html = html + '</tr>';
+                }
+                html = html + '</tbody>';
+                html = html + '</table>';
+                html = html + '<p>&nbsp;</p>';
+                html = html + '<table border="1" cellpadding="1" cellspacing="1" style="width:400px">';
+                html = html + '<tbody>';
+                html = html + '<tr>';
+                html = html + '<td>&nbsp;</td>';
+                html = html + '<td>&nbsp;</td>';
+                html = html + '</tr>';
+                html = html + '<tr>';
+                html = html + '<td style="text-align:center"><strong>FIRMA DIRECTOR DE AREA</strong></td>';
+                html = html + '<td style="text-align:center"><strong>FIRMA AUDITOR LIDER</strong></td>';
+                html = html + '</tr>';
+                html = html + '</tbody>';
+                html = html + '</table>';
+                CKEDITOR.instances.plan_ejecucion.setData(html);
+                $("#modalNumeroAuditoria").modal('hide');
+                $("#modalPlanEjecucion").modal('show');
+
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+    
+                if (jqXHR.status === 0) {
+    
+                    swal('Not connect: Verify Network.', "", "error");
+    
+                } else if (jqXHR.status == 404) {
+    
+                    swal('Requested page not found [404]', "", "error");
+    
+                } else if (jqXHR.status == 500) {
+    
+                    swal('Internal Server Error [500]', "", "error");
+    
+                } else if (textStatus === 'parsererror') {
+    
+                    swal('Requested JSON parse failed.', "", "error");
+        
+                } else if (textStatus === 'timeout') {
+    
+                    swal('Time out error', "", "error");
+        
+                } else if (textStatus === 'abort') {
+                    swal('Ajax request aborted.', "", "error");
+        
+                } else {
+                    swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+        
+                }//end if 
+    
+            }//end error
+        }); 
+           
+    }//end function consultarPlanEjecucion
+    
+    //INSTANCIAMOS EL CKEDITOR DE CLAUSULA
+    CKEDITOR.replace( 'plan_ejecucion' );
+    //agregar center CKEDITOR
+    jQuery(function() {
+        CKEDITOR.config.extraPlugins = 'justify';
+    }); 
+
+    //INSTANCIAMOS EL CKEDITOR DE CLAUSUAL
+    CKEDITOR.replace( 'detalleClausula' );
+
+    /*********************************************/
+    /**FUNCION cargar modal clausula **************/
+    /*********************************************/
+
+    function cargarModalClausula(){
+        
+        //abrir dialog
+        $("#dialogExtraer").dialog('open');
+
+    /*
+        //mostrar modal
+        $('#modalClausula').modal({'show':true, backdrop: 'static', keyboard: false});
+        //set focus
+        $('#modalClausula').on('shown.bs.modal', function () {
+            $('#id_norma').trigger('focus')
+        });
+
+        $('#modalClausula #accion').val("extraer");
+        //limpiar formulario
+        document.getElementById('form_clausula').reset();
+        //ocultar ckeditor
+        $("#modalClausula #numero_pagina").val('');
+        $('#div_numeroPagina').show();
+        $('#nombre_clausula').hide();
+        $('#ckeditor').hide();
+      */
+ 
+    }//end funcion cargarModalNorma
+
+
+    function extraerClausula(){
+
+        //var id_norma        = $("#modalClausula #id_norma").val();
+        var id_norma        = $("#normas").val();
+        if (id_norma =="" || id_norma== null ){
+            swal("Seleccione una Norma !", "", "info");
+            return false;
+        }//end if
+
+        //var escaneado_pdf        = $("#modalClausula #escaneado_pdf").val();
+        var escaneado_pdf        = $("#escaneado").val();
+        if (escaneado_pdf =="" || escaneado_pdf== null ){
+            swal("Seleccione si el PDF es Escaneado o No!!", "", "info");
+            return false;
+        }//end if
+
+        //var numero_pagina        = $("#modalClausula #numero_pagina").val();
+        var numero_pagina        = $("#pagina").val();
+        if (numero_pagina =="" || numero_pagina== null ){
+            swal("Ingrese el numero de Pagina para extrar la informacion !!", "", "info");
+            return false;
+        }//end if
+
+        //token
+        var csrftoken       = getCookie('csrftoken');
+					
+        //efecto cargando
+        $('body').waitMe({
+            effect : 'ios',
+            text : 'Procesando ...',
+            bg : 'rgba(255,255,255,0.7)',
+            color :'#000',
+            maxSize : '',
+            waitTime : -1,
+            textPos : 'vertical',
+            fontSize : '14',
+            source : '',
+            onClose : function() {}   
+        });
+                    
+        $.ajax({
+            type: "POST",
+            url: "/extraerClausula/",
+            data:{
+                csrfmiddlewaretoken : csrftoken, 
+                id_norma:id_norma,
+                escaneado_pdf:escaneado_pdf,
+                numero_pagina:numero_pagina,
+            },
+            dataType: "json",
+            success: function(data) {
+                //ocultar efecto cargando
+                $('body').waitMe("hide");
+                var codigo =data.resultado;
+                if (codigo=="ok_select"){
+                    $.get('media/normas/temporalPdf.txt', function(data) {
+                    //establecer accion
+                    //$('#modalClausula #accion').val('insert');
+                    //$('#modalClausula #clausula').val('');
+                    //set data ckeditor
+                    //$('#nombre_clausula').show();
+                    //$('#ckeditor').show();
+                    
+                    //CKEDITOR.instances.detalleClausula.setData(data);
+                        var text_sin_tags_html = data.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+                   
+                        $("#clausula").val(text_sin_tags_html);
+                        $("#dialogExtraer").dialog('close');
+                        $("#dialogClausula").dialog('open');
+                    }, 'text');
+                    //remove tag html
+
+                }    
+            },//end success
+            error: function( jqXHR, textStatus, errorThrown ) {
+                $('body').waitMe("hide");
+                if (jqXHR.status === 0) {
+
+                    swal('Not connect: Verify Network.', "", "error");
+
+                } else if (jqXHR.status == 404) {
+
+                    swal('Requested page not found [404]', "", "error");
+
+                } else if (jqXHR.status == 500) {
+
+                    swal('Internal Server Error [500]', "", "error");
+
+                } else if (textStatus === 'parsererror') {
+
+                    swal('Requested JSON parse failed.', "", "error");
+      
+                } else if (textStatus === 'timeout') {
+
+                    swal('Time out error', "", "error");
+      
+                } else if (textStatus === 'abort') {
+                    swal('Ajax request aborted.', "", "error");
+      
+                } else {
+                    swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+      
+                }//end if 
+
+            }//end error
+        }); 
+
+    }//end function extraerClausula
+
+    function consultarNorma(){
+
+	  var path = $("#modalNombreNorma #id_norma").val();
+
+	  var hostName=window.location.host+"/"
+	  var linkDoc="http://"+hostName+path;
+	  //MOSTRAR VENTAN CON DOCUMENTO
+	  window.open(linkDoc, '_blank', 'location=yes,height=600,width=900,scrollbars=yes,status=yes');
+
+      $("#modalNombreNorma").modal('hide');
+
+	} //end funtion
+
+
+
+</script>
+</html>

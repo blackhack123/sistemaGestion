@@ -1,0 +1,661 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR EL RENDIMIENTO DE CARGA -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <style>
+        /*.ui-jqgrid {font-size:0.8em}*/
+        .ui-jqgrid{position:relative;font-size:12px;}
+
+    </style>
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header">
+
+    <!-- Logo -->
+    <span href="" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b><i class="fa fa-cogs"></i> </b></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>Menú</span>
+    </span>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Menú de Navegacion</span>
+      </a>
+      <!-- Navbar Right Menu -->
+      <div class="navbar-custom-menu pull-left" style="margin-left:40px">
+        <ul class="nav navbar-nav">
+          {% if request.session.notificacionSeguimiento %}
+            <!-- ALERTAS SAC -->
+            <li class="dropdown notifications-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-bell-o"></i>
+                    <span class="label label-danger"> <i class="fa fa-info"></i></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="header">Tareas pendientes:</li>
+                    <li>
+                      <ul class="menu">
+                        <li>
+                            <a href="/colSeguimientos">
+                              <i class="fa fa-info-circle" style="color:red"></i>Seguimiento Pendiente
+                            </a>
+                        </li>
+                      </ul>
+                    </li>
+                </ul>
+            </li>
+          {% endif %}
+
+          {% if request.session.notificacionDocumentosPendientes %}
+          <!-- ALERTAS PENDIENTE SUBIR ARCHIVO -->
+          <li class="dropdown notifications-menu">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-bell-o"></i>
+                <span class="label label-danger"><i class="fa fa-info"></i></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">POE'S pendientes:</li>
+              <li>
+              <ul class="menu">
+                {% for procedimientos_pendientes in request.session.notificacionDocumentosPendientes %}
+                <li>
+                    <a href="/estadoDocColaborador">
+                      <i class="fa fa-info-circle" style="color:red"></i>{{ procedimientos_pendientes.proceso }}
+                    </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </ul>
+          </li>
+          {% endif %}
+          {% if request.session.notificacionPlanAccion %}
+          <!-- ALERTAS SEGUIMIENTO PENDIENTE -->
+          <li class="dropdown notifications-menu">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-bell-o"></i>
+                <span class="label label-danger"><i class="fa fa-info"></i></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">Acciones pendientes:</li>
+              <li>
+              <ul class="menu">
+                {% for plan in request.session.notificacionPlanAccion %}
+                <li>
+                    <a href="/colSeguimientos">
+                      <i class="fa fa-info-circle" style="color:red"></i>Acciones Pendientes({{ plan.total }})
+                    </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>{{ request.session.nombreUsuario }}</p>
+          <!-- Status -->
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        </div>
+      </div>
+
+
+      <!-- Sidebar Menu -->
+      <ul class="sidebar-menu tree" data-widget="tree">
+        <li class="header">Menú</li>
+        <!-- Optionally, you can add icons to the links -->
+        
+        <!--- DOCUMENTOS-->
+        <li class="treeview ">
+          <a href="#"><i class="fa fa-folder-open-o"></i> <span>Gestión Documental</span>
+              <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu">
+              <li><a href="/colaborador"><i class="fa fa-circle-o"></i>Administrar Documentos</a></li>
+              <li><a href="/estadoDocColaborador"><i class="fa fa-circle-o"></i>Estado Documentos</a></li>
+          </ul>
+        </li>
+
+        <!--- SEGUIMIENTOS -->
+        <li class="treeview">
+            <a href="#"><i class="glyphicon glyphicon-check"></i> <span>Seguimientos</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li ><a href="/colSeguimientos"><i class="fa fa-circle-o"></i>Administrar Seguimientos</a></li>
+            </ul>
+        </li>
+
+
+
+        <!--- CERRAR SESION-->
+        <li class="treeview">
+          <a href="#"><i class="fa fa-sign-out"></i> <span>Salir</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu">
+            <li ><a href="/logout"><i class="fa fa-circle-o"></i>Cerrar Sesión</a></li>
+          </ul>
+        </li>
+
+      </ul>
+      <!-- /.sidebar-menu -->
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+                <ol class="breadcrumb">
+                    <li>
+                      <a href="javascript:void(0)"><i class="fa fa-folder-open-o"></i> Gestion Documental</a>
+                    </li>
+                    <li class="active">
+                     Estado Documentos 
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- SECCION CONTENIDO DE LA PAGINA -->
+    <section class="content container-fluid">
+        <div class="row">
+            <!-- SUBIR ARCHIVO -->
+            <div class="col-md-2" style="margin-left:20px">
+                <a href="javascript:void(0)" class="btn btn-success btn-block btn-sm" data-toggle="modal" onclick="javascript:abrirModalSubirArchivo();">
+                    <i class="fa fa-cloud-upload">&nbsp;&nbsp;Subir Archivo</i>
+                </a> 
+            </div>
+        </div>
+
+
+      <!--SUBIR ARCHIVO -->
+      <div class="modal fade" id="subirArchivo">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/updateACtProce" method="POST" autocomplete="off" role="form"  enctype="multipart/form-data" id="formSubirArchivo">
+                        {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-window-close"></i>
+                        </button>
+                        <span class="badge bg-aqua">Subir Archivo</span>  
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="Archivo" class="value_required">Seleccione un Archivo:</label>
+                            {{documentoForm.archivo}}
+                        </div>
+                        <div class="form-group">
+                          <label for="Procedimientos" class="value_required">Procedimiento:</label>
+                          <select id="procedimiento" name="procedimiento" class="form-control" required onchange="setDestino($(this).val())">
+                            <option disabled selected>Seleccione:</option>
+                            {% for procedimiento in estado_documentos %}
+                              <option value="{{procedimiento.id}}">{{ procedimiento.proceso }} </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <input type="hidden" class="form-control" id="destino" name="destino" readonly>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label style="color:red;">*Campos Obligatorios </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Grabar Datos</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    <div class="row">
+        <div class="col-md-11">
+            <table class="table table-bordered table-hover" id="tableEstadoDocumentos">
+                <thead>
+                    <tr bgcolor="#bee5eb">
+                        <th class="text-center">PROCEDIMIENTO</th>
+                        <th class="text-center">ESTADO</th>
+                        <th class="text-center">ENCARGADO</th>
+                        <th class="text-center">LIDER DE NORMA</th>
+                        <th class="text-center">ADMINISTRADOR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for documento in estado_documentos %}
+                    <tr class="text-center">
+                        <!--PROCEDIMIENTO SUBIDO -->
+                        <td>{{ documento.proceso }}</td>
+
+                        <!-- ESTADO COLABORADOR -->
+                        {% if documento.estado_colaborador == '0' %}
+                            <td><span class="badge bg-yellow">Pendiente</span></td>
+                        {% elif documento.estado_colaborador == '1' %}
+                            <td class="text-center"><span class="badge bg-green">Archivo subido y pendiente de revision</span></td>
+                        {% elif documento.estado_colaborador == '2' %}
+                            <td class="text-center"><span class="badge bg-red">Observaciones por Encargado de Proceso</span></td>
+                        {% elif documento.estado_colaborador == '3' %}
+                            <td class="text-center"><span class="badge bg-green">Documento Aprobado</span></td>
+                        {% elif documento.estado_colaborador == '4' %}
+                            <td class="text-center"><span class="badge bg-red">Observaciones por Lider de Norma</span></td>
+                        {% elif documento.estado_colaborador == '5' %}
+                            <td class="text-center"><span class="badge bg-green">Aprobado por el Administrador</span></td>
+                        {% elif documento.estado_colaborador == '6' %}
+                            <td class="text-center"><span class="badge bg-red">Observaciones por el Administrador</span></td>
+                        {% endif %}
+
+                        <!-- ESTADO ENCARGADO -->
+                        {% if documento.estado_encargado == '0'  %}
+                            <td class="text-center"><span class="badge bg-yellow">Sin Archivos recibidos</span></td>
+                        {% elif documento.estado_encargado == '1'  %}
+                            <td class="text-center"><span class="badge bg-aqua">En revision por {{documento.jefe_proceso}}</span></td>
+                        {% elif documento.estado_encargado == '2'  %}
+                            <td class="text-center"><a href="javascript:void(0)" onclick="javascript:mostrarObservacionesEncargado();"><i class="fa fa-eye"></i> Observaciones Realizadas</a></td>
+                        {% elif documento.estado_encargado == '3'  %}
+                            <td class="text-center"><span class="badge bg-green">Aprobado</span></td>
+                        {% elif documento.estado_encargado == '4'  %}
+                            <td class="text-center"><span class="badge bg-yellow">Observaciones por Lider de Norma</span></td>
+                        {% endif %}
+
+                        <!-- ESTADO LIDER DE NORMA -->
+                        {% if documento.estado_lider == '0'  %}
+                            <td class="text-center"><span class="badge bg-yellow">Pendiente </span></td>
+                        {% elif documento.estado_lider == '1'  %}
+                            <td class="text-center"><span class="badge bg-yellow">En Revision</span></td>
+                        {% elif documento.estado_lider == '2'  %}
+                            <td class="text-center"><a href="javascript:void(0)" onclick="javascript:mostrarObservacionesLider('{{documento.id_proceso}}');"><i class="fa fa-eye"></i> Observaciones</a></td>
+                        {% elif documento.estado_lider == '3'  %}
+                            <td class="text-center"><span class="badge bg-green">Aprobado</span></td>
+                        {% endif %}
+
+
+                            <!-- ESTADO ADMINISTRADOR -->
+                        {% if documento.estado_admin == '0'  %}
+                            <td class="text-center"><span class="badge bg-yellow">Pendiente</span></td>
+                        {% elif documento.estado_admin == '1'  %}
+                            <td class="text-center"><span class="badge bg-aqua">Pendiente de Aprobar</span></td>
+                        {% elif documento.estado_admin == '2'  %}
+                            <td class="text-center"><a href="javascript:void(0)" onclick="mostrarObservacionesAdmin('{{documento.id_proceso}}');"><i class="fa fa-eye"> Observacion Realizada</i></a></td>
+                        {% elif documento.estado_admin == '3'  %}
+                            <td class="text-center"><span class="badge bg-green">Aprobado y Vigente</span></td>
+                        {% endif %}
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+-->
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<script>
+
+
+    /*********************************************/
+    /**FUNCION PARA OBTENER EL TOKEN DJANGO*******/
+    /*********************************************/
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        //RETORNANDO EL TOKEN
+        return cookieValue;
+
+    }//end function getCookie
+
+
+    /** 
+    * PARAMETRIZAR DATATABLES
+    */
+    var table = $('#tableEstadoDocumentos').DataTable( {
+        "pageLength": 5,
+       "scrollY":        "150px",
+       "scrollCollapse": true,
+       "aLengthMenu": [[5, 10, 50, 100,-1], [5, 10, 50, 100,"All"]],
+       "iDisplayLength": 5,
+       "language": {
+       url: "/static/DataTables/es_ES.json"
+       }
+   });
+   function mostrarObservacionesEncargado(){
+    
+    //token
+    var csrftoken = getCookie('csrftoken');
+    //peticion ajax
+    $.ajax({
+        type: "POST",
+        url: "/selectNotEncargado/",
+        data:{
+            csrfmiddlewaretoken : csrftoken, 
+        },
+        dataType: "json",
+        success: function(data) {
+           result = data[0];
+           swal('Observacion: ' ,result.observaciones_encargado, 'info');
+        },
+        error: function( jqXHR, textStatus, errorThrown ) {
+
+            if (jqXHR.status === 0) {
+
+                swal('Not connect: Verify Network.', "", "error");
+
+            } else if (jqXHR.status == 404) {
+
+                swal('Requested page not found [404]', "", "error");
+
+            } else if (jqXHR.status == 500) {
+
+                swal('Internal Server Error [500]', "", "error");
+
+            } else if (textStatus === 'parsererror') {
+
+                swal('Requested JSON parse failed.', "", "error");
+    
+            } else if (textStatus === 'timeout') {
+
+                swal('Time out error', "", "error");
+    
+            } else if (textStatus === 'abort') {
+                swal('Ajax request aborted.', "", "error");
+    
+            } else {
+                swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+    
+            }//end if 
+
+        }//end error
+    }); 
+
+   }//end function mostrarObservacionesEncargado
+
+
+   function mostrarObservacionesLider(id_proceso){
+    
+    //token
+    var csrftoken = getCookie('csrftoken');
+    //peticion ajax
+    $.ajax({
+        type: "POST",
+        url: "/selectNotLider/",
+        data:{
+            csrfmiddlewaretoken : csrftoken, 
+            id_proceso:id_proceso
+        },
+        dataType: "json",
+        success: function(data) {
+           result = data[0];
+           console.log(result);
+           swal('Observacion: ' ,result.observaciones_lider, 'info');
+        },
+        error: function( jqXHR, textStatus, errorThrown ) {
+
+            if (jqXHR.status === 0) {
+
+                swal('Not connect: Verify Network.', "", "error");
+
+            } else if (jqXHR.status == 404) {
+
+                swal('Requested page not found [404]', "", "error");
+
+            } else if (jqXHR.status == 500) {
+
+                swal('Internal Server Error [500]', "", "error");
+
+            } else if (textStatus === 'parsererror') {
+
+                swal('Requested JSON parse failed.', "", "error");
+    
+            } else if (textStatus === 'timeout') {
+
+                swal('Time out error', "", "error");
+    
+            } else if (textStatus === 'abort') {
+                swal('Ajax request aborted.', "", "error");
+    
+            } else {
+                swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+    
+            }//end if 
+
+        }//end error
+    }); 
+
+   }//end function mostrarObservacionesLider
+
+
+   function mostrarObservacionesAdmin(id_proceso){
+    
+        //token
+        var csrftoken = getCookie('csrftoken');
+
+        //peticion ajax
+        $.ajax({
+            type: "POST",
+            url: "/selectNotAdmin/",
+            data:{
+                csrfmiddlewaretoken : csrftoken, 
+                id_proceso:id_proceso
+            },
+            dataType: "json",
+            success: function(data) {
+               result = data[0];
+               swal('Observacion: ' ,result.observaciones_admin, 'info');
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+    
+                if (jqXHR.status === 0) {
+    
+                    swal('Not connect: Verify Network.', "", "error");
+    
+                } else if (jqXHR.status == 404) {
+    
+                    swal('Requested page not found [404]', "", "error");
+    
+                } else if (jqXHR.status == 500) {
+    
+                    swal('Internal Server Error [500]', "", "error");
+    
+                } else if (textStatus === 'parsererror') {
+    
+                    swal('Requested JSON parse failed.', "", "error");
+        
+                } else if (textStatus === 'timeout') {
+    
+                    swal('Time out error', "", "error");
+        
+                } else if (textStatus === 'abort') {
+                    swal('Ajax request aborted.', "", "error");
+        
+                } else {
+                    swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+        
+                }//end if 
+    
+            }//end error
+        }); 
+
+   }//end function mostrarObservacionesAdmin
+
+
+   function abrirModalSubirArchivo(){
+
+    //abrir modal
+    $("#subirArchivo").modal('show');
+
+    //reset al formulario al abrir modal
+    document.getElementById("formSubirArchivo").reset(); 
+  
+    }//end function abrirModalSubirArchivo
+
+
+
+    function setDestino(id_proceso){
+
+        //token
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+            type: "POST",
+            url: "/selectProceso/",
+            data:{
+                csrfmiddlewaretoken : csrftoken, 
+                id_proceso:id_proceso,
+            },
+            dataType: "json",
+            success: function(data) {
+                
+                proceso = data.proceso_list;
+                var ruta = proceso.url_carpeta.split('media/gestionDocumental/');
+                $("#subirArchivo #destino").val(proceso.url_carpeta);
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+    
+                if (jqXHR.status === 0) {
+    
+                    swal('Not connect: Verify Network.', "", "error");
+    
+                } else if (jqXHR.status == 404) {
+    
+                    swal('Requested page not found [404]', "", "error");
+    
+                } else if (jqXHR.status == 500) {
+    
+                    swal('Internal Server Error [500]', "", "error");
+    
+                } else if (textStatus === 'parsererror') {
+    
+                    swal('Requested JSON parse failed.', "", "error");
+        
+                } else if (textStatus === 'timeout') {
+    
+                    swal('Time out error', "", "error");
+        
+                } else if (textStatus === 'abort') {
+                    swal('Ajax request aborted.', "", "error");
+        
+                } else {
+                    swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+        
+                }//end if 
+    
+            }//end error
+        }); 
+    }//end function setDestino
+
+
+
+</script>
+
+</body>
+</html>

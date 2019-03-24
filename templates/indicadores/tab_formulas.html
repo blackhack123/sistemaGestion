@@ -1,0 +1,213 @@
+
+    <div class="tab-pane fade" id="formulas" role="tabpanel" aria-labelledby="formulas-tab">
+
+        <div class="row"><br>
+            <div class="col-md-2">
+                <a href ="javascript:void(0);" class="btn btn-primary btn-block btn-sm" onclick="cargarModalFormula();" >
+                    <i class="fa fa-plus"> Crear</i>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href ="/excel_formulas" class="btn btn-success btn-block btn-sm" id="excel">
+                    <i class="fa fa-file-excel-o"> Reporte Excel</i>
+                </a>
+            </div>
+        </div>                    
+
+        <div class="row">
+            <div class="col-md-12">
+                <table id="gridFormulas"></table>
+                <div id="pagerFormulas" class="text-black"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- Modal Departamento -->
+    <div class="modal fade" id="modalFormula" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form action="" id="formFormula" method="post">
+                {% csrf_token %}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="titleFormula"></h4>
+          </div>
+          <div class="modal-body">
+              <input type="hidden" id="formulaId" name="formulaId">
+              <div class="row">
+                  <div class="col-md-4">
+                      <div class="form-group">
+                          <label for="nombre" class="value_required">Nombre:</label>
+                          <input type="text" class="form-control" name="nombre" id="nombre" required>
+                      </div>
+                  </div>
+                  <div class="col-md-4">
+                      <div class="form-group">
+                          <label for="nombre" >Descripción:</label>
+                          <input type="text" class="form-control" name="descripcion" id="descripcion">
+                      </div>
+                  </div>
+                  <div class="col-md-4">
+                      <div class="form-group">
+                          <label for="estado" class="value_required">Estado</label>
+                          <select name="estado" id="estado" class="form-control" required>
+                              <option value="1" selected>Activo</option>
+                              <option value="0">Inactivo</option>
+                          </select>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="operador1">Operador 1</label>
+                          <input type="text" name="operador1" id="operador1" class="form-control">
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="variable1" class="value_required">Variable 1</label>
+                          <select name="variable1" id="variable1" class="form-control" required>
+                              <option value="0" selected disabled>Seleccione</option>
+                              {% for variable in variables_list %}
+                              <option value="{{ variable.pk }}">{{ variable.nombre }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="operador2">Operador 2</label>
+                          <input type="text" name="operador2" id="operador2" class="form-control">
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="variable2" class="value_required">Variable 2</label>
+                          <select name="variable2" id="variable2" class="form-control">
+                              <option value="0" selected disabled>Seleccione</option>
+                              {% for variable in variables_list %}
+                              <option value="{{ variable.pk }}">{{ variable.nombre }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="operador3">Operador 3</label>
+                          <input type="text" name="operador3" id="operador3" class="form-control">
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="variable3" class="value_required">Variable 3</label>
+                          <select name="variable3" id="variable3" class="form-control">
+                              <option value="0" selected disabled>Seleccione</option>
+                              {% for variable in variables_list %}
+                              <option value="{{ variable.pk }}">{{ variable.nombre }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="operador4">Operador 4</label>
+                          <input type="text" name="operador4" id="operador4" class="form-control">
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="variable4" class="value_required">Variable 4</label>
+                          <select name="variable4" id="variable4" class="form-control" >
+                              <option value="0" selected disabled>Seleccione</option>
+                              {% for variable in variables_list %}
+                              <option value="{{ variable.pk }}">{{ variable.nombre }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="operador5">Operador 5</label>
+                          <input type="text" name="operador5" id="operador5" class="form-control">
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="variable5" class="value_required">Variable 5</label>
+                          <select name="variable5" id="variable5" class="form-control">
+                              <option value="0" selected disabled>Seleccione</option>
+                              {% for variable in variables_list %}
+                              <option value="{{ variable.pk }}">{{ variable.nombre }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="operador6">Operador 6</label>
+                          <input type="text" name="operador6" id="operador6" class="form-control">
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="form-group">
+                          <label for="variable6" class="value_required">Variable 6</label>
+                          <select name="variable6" id="variable6" class="form-control">
+                              <option value="0" selected disabled>Seleccione</option>
+                              {% for variable in variables_list %}
+                              <option value="{{ variable.pk }}">{{ variable.nombre }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-3">
+                     <a href="javascript:void(0);" class="btn btn-success" onclick="armarFormula();">Previsualizar Fórmula</a>
+                  </div>
+                  <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="formulaResultante">Fórmula:</label>
+                        <div id="formulaResultante"></div>
+                    </div>
+                  </div>
+              </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Grabar Datos</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cerrar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal Observacion -->
+    <div class="modal fade" id="modalObservacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title badge bg-green" id="myModalLabel">Detalle</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="observacion" class="value_required">Descripción</label>
+                <textarea name="observacion" id="observacion" rows="5"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,60 @@
+{%load staticfiles%}
+<!-- SECCION USUARIO ONLINE -->
+<div class="user-panel">
+    <div class="pull-left image">
+        <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+    </div>
+    <div class="pull-left info">
+        <p>{{ request.session.nombreUsuario }}</p>
+        <!-- Status -->
+        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+    </div>
+</div>
+<!-- MENU -->
+<ul class="sidebar-menu tree" data-widget="tree">
+        <li class="header">Menú</li>
+        <!-- Optionally, you can add icons to the links -->
+
+    <!--- AUDITORIAS-->
+    <li class="treeview">
+        <a href="#"><i class="fa fa-folder-open"></i> <span>Gestión Documental</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/lid_norma"><i class="fa fa-circle-o"></i>Directorios y Archivos</a></li>
+            <li ><a href="/estadodoc_lidernorma"><i class="fa fa-circle-o"></i>Estado Documentos</a></li>
+        </ul>
+    </li>
+              
+
+    <!-- ADMNISTRAR SACS
+    <li class="treeview ">
+        <a href="#"><i class="fa fa-clone"></i> <span>Sacs</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/adminSacLider"><i class="fa fa-circle-o"></i>Administrar SAC</a></li>
+        </ul>
+    </li>
+    -->
+        <!--- CERRAR SESION-->
+    <li class="treeview">
+        <a href="#"><i class="fa fa-sign-out"></i> <span>Salir</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/logout"><i class="fa fa-circle-o"></i>Cerrar Sesión</a></li>
+        </ul>
+    </li>
+
+
+
+
+
+</ul>

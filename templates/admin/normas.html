@@ -1,0 +1,264 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+            <ol class="breadcrumb">
+                <li>
+                <a href="javascript:void(0)"><i class="fa fa-book"></i> Normas</a>
+                </li>
+                <li class="active">
+                    Administrar Normas
+                </li>
+            </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                swal('{{message}}', '', '{{ message.tags }}');
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:15px;">
+
+        <!-- INPUT BUSCAR -->
+        <div class="col-md-2">
+            <input id="search_cells" type="text" class="form-control input-sm" placeholder="Buscar.."/>
+        </div>
+
+            <!-- CREAR NORMA -->
+            <div class="col-md-2">
+                <a href="#" class="btn btn-primary btn-block btn-sm" onclick="cargarModalNorma();">
+                    <i class="fa fa-plus">&nbsp;&nbsp;Crear Norma</i>
+                </a> 
+            </div>
+            <!-- GENERAR EXCEL -->
+            <div class="col-md-2">
+                <a href ="/excelNormas" class="btn btn-success btn-block btn-sm" id="excel">
+                    <i class="fa fa-file-excel-o">&nbsp;&nbsp; Generar Excel</i>
+                </a>
+                
+            </div>
+        
+            <!-- GENERAR PDF -->
+            <div class="col-md-2">
+                <a href="/pdfNormas" class="btn btn-danger btn-block btn-sm" id="pdf">
+                    <i class="fa fa-file-pdf-o">&nbsp;&nbsp; Generar Pdf</i>
+                </a>
+            </div>
+            
+    </div>
+        <!-- GRID USUARIOS-->
+      <table id="gridNormas"></table>
+      <div id="pagerNormas" style="color:black"></div>
+
+
+
+
+
+    <!-- MODA AREA-->
+    <div class="modal fade" id="modalNorma">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-window-close"></i>
+                    </button>
+                        <h4 class="modal-title"><strong>Norma</strong> </h4>
+                </div>
+                <div class="modal-body">
+                <form id="formNorma"  method="POST" role="form"  enctype="multipart/form-data" autocomplete="off" >
+                    {% csrf_token %}
+                    <div class="box-body">
+                        <input type="hidden" id="accion">
+                        <div class="form-group">
+                            {{ formNorma.idNorma.as_hidden }}
+                            <label for="Proceso" class="value_required">Norma:</label>
+                            {{ formNorma.norma }}
+                        </div>
+                        <div class="form-group" id="divDocumento">
+                                <label for="click para Ver Documento:"></label>
+                                <input type="button" id="btnMostrarDocumento" value="Ver Archivo">
+                                <input type="button" id="btnReemplazarDocumento" value="Reemplazar" onclick="$('#divDocumento').hide(); $('#divSelectDocumento').show();">
+                        </div>
+                        <div class="form-group" id="divSelectDocumento">
+                            <label for="Documento" class="value_required">Seleccione su Archivo:</label>
+                            {{ formNorma.docNorma }}
+                        </div>
+                        <div class="form-group">
+                            <span class="badge bg-blue">Seleccione Auditor Líder</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="Lider" class="value_required">Buscar por Cargo:</label>
+                            <select class="form-control" id="cargo" name="cargo" onchange="javascript:cargarPersonal($(this).val());" required>
+                                <option disabled selected>Seleccione:</option>
+                            {% for cargo in cargos %}
+                                <option value="{{cargo.id}}">{{cargo.nombre}}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group" style="display:none" id="div_personal">
+                            <label for="Personal" class="value_required">Personal</label>
+                            <select name="personal" id="personal" class="form-control" required>
+                                
+                                <!-- SE CARGA EL PERSONAL EN BASE AL CARGO -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Estado:</label>
+                            {{ formNorma.estado }}
+                        </div>
+    
+                        <div class="row">
+                                <div class="col-md-4">
+                                    <label style="color:red;">*Campos Obligatorios </label>
+                                </div>
+                        </div>
+                        <!--
+                        <div class="form-group">
+                            <label for="nombre" class="value_required">Proceso:</label>
+                            <input type="text" class="form-control text-capitalize" id="proceso" name="proceso" placeholder="Proceso" required>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Estado:</label>
+                            <select  id="estadoProceso" name="estadoProceso" class="form-control">
+                                <option   disabled selected>Seleccione</option>
+                                <option id="1" value="1">Activo</option>
+                                <option id="0" value="0">Inactivo</option>
+                            </select>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="descripcion" class="value_required">Actividades:</label>
+    
+                            <input type="file" class="form-control-file" id="docProceso" name="docProceso" required>
+                        
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label style="color:red;">*Campos Obligatorios </label>
+                            </div>
+                        </div>
+                    </div>
+                    -->
+    
+                </div>
+                <div class="modal-footer"> 
+                    <button type="submit" class="btn btn-primary" > <!--onclick="confirmarGrabar();" -->
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+    
+                </div>
+            </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    
+
+
+
+
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- SWEET ALERT-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<!-- VALIDACIONES -->
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/normas.js' %}"></script>
+</body>
+</html>

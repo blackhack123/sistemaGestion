@@ -1,0 +1,162 @@
+<p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SOLICITUD DE ACCION CORRECTIVA/PREVENTIVA</strong></p>
+
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="height:106px; width:579px">
+	<tbody>
+		<tr>
+			<td><strong>TIPO:</strong></td>
+			<td>&nbsp;</td>
+			<td><strong>CRITICIDAD:</strong></td>
+			<td>&nbsp;&nbsp;</td>
+		</tr>
+		<tr>
+			<td><strong>AREA:</strong></td>
+			<td>&nbsp;&nbsp;&nbsp;</td>
+			<td><strong>RESPONSABLE:</strong></td>
+			<td>&nbsp;&nbsp;</td>
+		</tr>
+		<tr>
+			<td><strong>ORIGEN:</strong></td>
+			<td>&nbsp;</td>
+			<td><strong>SOLICITANTE:</strong></td>
+			<td>&nbsp;&nbsp;&nbsp;</td>
+		</tr>
+		<tr>
+			<td><strong>FECHA:</strong></td>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+<hr />
+<p><strong>DESCRIPCI&Oacute;N DEL HALLAZGO O LA NO CONFORMIDAD</strong></p>
+
+<p>&nbsp;</p>
+
+<p><strong>DESCRIPCI&Oacute;N DE LA CORRECCI&Oacute;N INMEDIATA TOMADA: (EN CASO DE CORRESPONDER)</strong></p>
+
+<p>&nbsp;</p>
+
+<p><strong>AN&Aacute;LISIS DE CAUSA</strong></p>
+
+<p>&nbsp;</p>
+
+<p><strong>PLAN DE ACCION</strong></p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td colspan="3" rowspan="1"><strong>ACCION A DESARROLLAR</strong></td>
+			<td colspan="2" rowspan="1"><strong>SEGUIMIENTO</strong></td>
+		</tr>
+		<tr>
+			<td><strong>DETALLE</strong></td>
+			<td><strong>PLAZO</strong></td>
+			<td><strong>RESPONSABLE</strong></td>
+			<td><strong>FECHA</strong></td>
+			<td><strong>RESPONSABLE</strong></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><strong>APROBACI&Oacute;N DEL PLAN DE ACCION</strong></p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td colspan="2" rowspan="1"><strong>ESTADO</strong></td>
+			<td colspan="1" rowspan="2">FECHA</td>
+			<td colspan="1" rowspan="2">NOMBRE Y FIRMA GERENTE</td>
+		</tr>
+		<tr>
+			<td><strong>APROBADO</strong></td>
+			<td><strong>POR CORREGIR</strong></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><strong>OBSERVACIONES:</strong></td>
+			<td colspan="3" rowspan="1">&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><strong>CIERRE EFECTIVO DE LA ACCION</strong></p>
+
+<table border="1" style="width:604px">
+	<tbody>
+		<tr>
+			<td>
+			<p><strong>IMPLEMENTADA Y EFECTIVA</strong></p>
+			</td>
+			<td>
+			<p><strong>IMPLEMENTADA Y NO EFECTIVA</strong></p>
+			</td>
+			<td>
+			<p><strong>NO IMPLEMENTADA</strong></p>
+			</td>
+			<td>
+			<p><strong>FECHA</strong></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+			<p>&nbsp;</p>
+			</td>
+			<td>
+			<p>&nbsp;</p>
+			</td>
+			<td>
+			<p>&nbsp;</p>
+			</td>
+			<td>
+			<p>&nbsp;</p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			<p><strong>NOMBRE Y FIRMA DE AUDITOR INTERNO</strong></p>
+			</td>
+			<td colspan="2">
+			<p><strong>NOMBRE Y FIRMA GERENTE GENERAL</strong></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">&nbsp;</td>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>

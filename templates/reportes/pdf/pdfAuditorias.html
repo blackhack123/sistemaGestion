@@ -1,0 +1,64 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Areas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+    td,tr 
+{
+    height: 28px; 
+    width:auto;
+    text-align:center; 
+    /*vertical-align:middle; */
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 12px;
+    vertical-align:middle;
+}
+
+
+</style>
+<h1 style="text-align:center;  font-family:Times New Roman; font-weight: bold;">Reporte General de Auditorias</h1>
+
+{% if auditorias_list %}
+ <table border="1">
+     <thead>
+         <th class="customTableHeader" bgcolor="lightskyblue">Auditoria</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Lugar</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Norma</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Proceso</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Procedimiento</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Inicia</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">H. Inicio</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Finaliza</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Auditor</th>
+     </thead>
+     <tbody>
+        {% for e in auditorias_list %}
+            <tr>
+                <td>{{ e.numero_auditoria }}</td>
+                <td>{{ e.lugar }}</td>
+                <td>{{ e.nombre_norma }}</td>
+                <td>{{ e.nombre_area }}</td>
+                <td>{{ e.nombre_proceso }}</td>
+                <td>{{ e.fec_inicio }}</td>
+                <td>{{ e.hora_inicio }}</td>
+                <td>{{ e.fec_fin }}</td>
+                <td>{{ e.nombre_auditor }}</td>
+            </tr>
+        {% endfor %}
+     </tbody>
+ </table>
+ {% else %}
+    <h4 style="text-align:center;">No existen Auditorias !!</h4>
+ {% endif %}    
+
+</body>
+</html>

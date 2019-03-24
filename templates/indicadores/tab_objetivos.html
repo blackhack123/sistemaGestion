@@ -1,0 +1,192 @@
+
+    <div class="tab-pane fade" id="objetivos" role="tabpanel" aria-labelledby="objetivos-tab">
+
+        <div class="row" ><br>
+            <div class="col-md-2">
+                <a href ="javascript:void(0);" class="btn btn-primary btn-block btn-sm" onclick="cargarModalObjetivo();" >
+                    <i class="fa fa-plus"> Crear</i>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href ="/excel_objetivo" class="btn btn-success btn-block btn-sm" id="excel">
+                    <i class="fa fa-file-excel-o"> Reporte Excel</i>
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <table id="gridObjetivosPadre"></table>
+                <div id="pagerObjetivosPadre" class="text-black"></div>
+            </div>
+        </div>
+        <br>
+
+    </div> <!-- Fin DIV TAB Objetivos-->
+
+
+        <!--MOdal crear objetivo -->
+        <div class="modal fade" id="modalObjetivos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <form action="/ingresar_objetivo" method="POST" autocomplete="off" id="formObjetivos">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h3 class="modal-title" id="titleModalObjetivo"><strong>Objetivos</strong></h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="hidden"  id="idobjetivo" name="idobjetivo">
+                                <div class="form-group">
+                                    <label for="Código" class="value_required" >Código:</label>
+                                    <input autofocus="autofocus" type="text"  id="codigo" name="codigo" class="form-control" required placeholder="Ejemplo: 1.2">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Nombre" class="value_required">Nombre:</label>
+                                    <input type="text"  id="nombre" name="nombre" class="form-control" value="" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Padre" class="value_required">Objetivo Padre:</label>
+                                    <select class="form-control" name="padre" id="padre">
+                                        <option value="0" selected >TODOS</option>
+                                        {% for objetivo in objetivos_list %}
+                                        <option value="{{ objetivo.pk }}">{{objetivo.nombre}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Indicador" class="value_required">Indicador:</label>
+                                    <input type="text"  id="indicador" name="indicador" class="form-control" required placeholder="Ejemplo: USD">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Signo" class="value_required">Signo:</label>
+                                    <select class="form-control" name="signo" id="signo" required>
+                                        <option disabled selected>Seleccionar</option>
+                                        <option value="+">+</option>
+                                        <option value="-">-</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Operación" class="value_required">Operación:</label>
+                                    <select class="form-control" name="operacion" id="operacion" required >
+                                        <option disabled selected>Seleccionar</option>
+                                        <option value="1">Ponderado</option>
+                                        <option value="2">Promedio</option>
+                                        <option value="3">Suma</option>
+                                    </select>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Ponderacion">Ponderación:</label>
+                                    <input type="text"  id="ponderacion" name="ponderacion" class="form-control" placeholder="Ejemplo: 1-100" >
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Periodos">Operación entre periodos:</label>
+                                    <select class="form-control" name="periodos" id="periodos" required>
+                                        <option disabled selected>Seleccionar</option>
+                                        <option value="1">Anual</option>
+                                        <option value="2">Semestral</option>
+                                        <option value="3">Quimestral</option>
+                                        <option value="4">Trimestral</option>
+                                        <option value="5">Mensual</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Estado" class="value_required">Estado:</label>
+                                    <select class="form-control" name="estado" id="estado" required>
+                                        <option value="1" selected>Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Meta" class="value_required">Meta planeada entre rangos:</label>
+                                    <select class="form-control" name="meta" id="meta" required onchange="mostrarMetas(this);">
+                                        <option disabled selected>Seleccionar</option>
+                                        <option value="1">SI</option>
+                                        <option value="0">NO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="metas" style="display:none;">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="metaInicial">Meta Inicial</label>
+                                        <input type="text" id="metaInicial" name="metaInicial" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="metaFinal">Meta Final</label>
+                                        <input type="text" id="metaFinal" name="metaFinal" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Comentarios">Observaciones:</label>
+                            <textarea name="comentarios" id="comentarios" class="form-control" ></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-floppy-o"></i> Grabar Datos
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="fa fa-close"></i> Salir
+                        </button>
+                    </div>
+                </form>
+              </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- Modal Observacion -->
+        <div class="modal fade" id="modalObservacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title badge bg-green" id="myModalLabel">Observación</h4>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                      <label for="observacion">Observación:</label>
+                      <textarea name="observacion" id="observacion" rows="4" class="form-control" readonly></textarea>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>

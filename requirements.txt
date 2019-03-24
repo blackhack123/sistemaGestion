@@ -1,0 +1,14 @@
+Django==1.9.8
+MySQL-python==1.2.5
+PyMySQL==0.8.0
+openpyxl==2.5.0
+pdfminer==20140328
+xhtml2pdf==0.2b1
+tesseract==0.1.3
+Wand==0.4.4
+#para centos/fedora
+ImageMagick-devel
+pytesseract==0.2.2
+Pillow==5.0.0
+pathlib
+#pip install -r requirements.txt

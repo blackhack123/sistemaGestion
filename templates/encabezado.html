@@ -1,0 +1,96 @@
+{% load staticfiles %}
+<!-- Main Header -->
+<header class="main-header">
+    <!-- Logo -->
+    <span href="" class="logo">
+        <span class="logo-mini"><b><i class="fa fa-cogs"></i> </b></span>
+        <span class="logo-lg"><img src="{% static 'images/logos/gear6.jpg' %}" width="65" height="41" style="border: 3px solid #ddd; border-radius: 4px;"><b> &nbsp;Menú</span>
+    </span>
+    <nav class="navbar navbar-static-top" role="navigation">
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Menu de Navegacion</span>
+        </a>
+        <div class="navbar-custom-menu " style="margin-right:40px">
+            <ul class="nav navbar-nav ">
+                <li class="dropdown notifications-menu">
+                     <a href="http://www.rgmanagementcorp.com"  target="_blank">
+                        <img src="{% static 'images/rg/help2.png' %}"  width="60" height="30" style="background-color:white;border: 3px solid #ddd; border-radius: 4px;" >
+                        <span class="label label-danger"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="navbar-custom-menu pull-left" style="margin-right:40px">
+            <ul class="nav navbar-nav ">
+                <!--NOTIFICACIONES DE DOCUMENTOS PENDIENTES DE APROBAR -->
+                {% if request.session.notificacionDocumentosAdmin %}
+                <li class="dropdown notifications-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="label label-danger"> Revisiones Pendientes</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="header">Procedimientos:</li>
+                        <li>
+                            <ul class="menu">
+                              {% for notificacion in  request.session.notificacionDocumentosAdmin  %}
+                                <li>
+                                    <a href="/documentos">
+                                        <i class="fa fa-info-circle text-red"></i>Documento ({{ notificacion.proceso }}) pendiente
+                                    </a>
+                                </li>
+                              {% endfor %}
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if request.session.sacAuditor or request.session.sacJefe or  request.session.sacSeguimiento %}
+                <!-- ALERTAS SAC -->
+                <li class="dropdown notifications-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="label label-danger"> SACS</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="header">Tareas pendientes:</li>
+                        <li>
+                            {% if request.session.sacAuditor %}
+                            <ul class="menu">
+                                <li>
+                                    <a href="/sac">
+                                        <i class="fa fa-info-circle" style="color:red"></i>Auditor requiere su aprobación
+                                    </a>
+                                </li>
+                            </ul>
+                            {% endif %}
+                            {% if request.session.sacJefe %}
+                            <ul class="menu">
+                                <li>
+                                    <a href="/sac">
+                                        <i class="fa fa-info-circle" style="color:red"></i>Jefe de Area requiere su aprobación
+                                    </a>
+                                </li>
+                            </ul>
+                            {% endif %}
+                            {% if request.session.sacSeguimiento %}
+                            <ul class="menu">
+                                {% for seguimiento in request.session.sacSeguimiento %}
+                                <li>
+                                    <a href="/sac">
+                                        <i class="fa fa-info-circle" style="color:red"></i>Seguimiento en SAC N°: {{seguimiento.sac_id}}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                
+                            </ul>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul> 
+        </div>
+    </nav>
+</header>

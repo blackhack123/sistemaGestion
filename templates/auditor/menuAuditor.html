@@ -1,0 +1,71 @@
+{%load staticfiles%}
+<!-- SECCION USUARIO ONLINE -->
+<div class="user-panel">
+    <div class="pull-left image">
+        <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+    </div>
+    <div class="pull-left info">
+        <p>{{ request.session.nombreUsuario }}</p>
+        <!-- Status -->
+        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+    </div>
+</div>
+<!-- MENU -->
+<ul class="sidebar-menu tree" data-widget="tree">
+        <li class="header">Menú</li>
+        <!-- Optionally, you can add icons to the links -->
+
+    <!--- AUDITORIAS-->
+    <li class="treeview">
+        <a href="#"><i class="fa fa-industry"></i> <span>Auditorias</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/auditor"><i class="fa fa-circle-o"></i>Auditorias Designadas</a></li>
+        </ul>
+    </li>
+              
+
+    <!--- PREPARAR AUDITORIA -->
+    <li class="treeview">
+        <a href="#"><i class="fa fa-folder-open-o"></i> <span>Documentación</span>
+        <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/auditDoc"><i class="fa fa-circle-o"></i>Preparar Auditoría</a></li>
+        </ul>
+    </li>
+
+    <!--- SACS-->
+    <li class="treeview ">
+        <a href="#"><i class="fa fa-clone"></i> <span>Sacs</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li><a href="/audiSac"><i class="fa fa-circle-o"></i>Crear SAC </a></li>
+        </ul>
+    </li>
+
+        <!--- CERRAR SESION-->
+    <li class="treeview">
+        <a href="#"><i class="fa fa-sign-out"></i> <span>Salir</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/logout"><i class="fa fa-circle-o"></i>Cerrar Sesión</a></li>
+        </ul>
+    </li>
+
+
+
+
+
+</ul>

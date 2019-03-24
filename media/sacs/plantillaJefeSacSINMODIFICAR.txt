@@ -1,0 +1,54 @@
+ 
+<p><strong>DESCRIPCI&Oacute;N DE LA CORRECCI&Oacute;N INMEDIATA TOMADA: (EN CASO DE CORRESPONDER)</strong></p>
+
+<p>&nbsp;</p>
+
+<p><strong>AN&Aacute;LISIS DE CAUSA</strong></p>
+
+<p>&nbsp;</p>
+
+<p><strong>PLAN DE ACCION</strong></p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td colspan="3" rowspan="1"><strong>ACCION A DESARROLLAR</strong></td>
+			<td colspan="2" rowspan="1"><strong>SEGUIMIENTO</strong></td>
+		</tr>
+		<tr>
+			<td><strong>DETALLE</strong></td>
+			<td><strong>PLAZO</strong></td>
+			<td><strong>RESPONSABLE</strong></td>
+			<td><strong>FECHA</strong></td>
+			<td><strong>RESPONSABLE</strong></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>

@@ -1,0 +1,71 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Procesos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+    td,tr 
+{
+    height: 28px; 
+    width:auto;
+    text-align:center; 
+    /*vertical-align:middle; */
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 12px;
+    vertical-align:middle;
+}
+
+
+</style>
+<h1 style="text-align:center;  font-family:Times New Roman; font-weight: bold;">Reporte General de SubProcesos</h1>
+
+{% if subprocesos %}
+ <table border="1">
+     <thead>
+         <th width="10%" class="customTableHeader" bgcolor="lightskyblue">#</th>
+         <th  class="customTableHeader" bgcolor="lightskyblue">AREA</th>
+         <th  class="customTableHeader" bgcolor="lightskyblue">PROCESO</th>
+         <th  class="customTableHeader" bgcolor="lightskyblue">SUBPROCESO</th>
+     </thead>
+     <tbody>
+      
+        {% for e in subprocesos %}
+            <tr>
+                <!-- MENSAJE PERSONALIZADO EN BASE AL Estado -->
+                {% if e.estado == "1" %}
+
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ e.area }}</td>
+                    <td>{{ e.proceso }}</td>
+                    <td>{{ e.subproceso }}</td>
+                {%endif%}
+
+                {% if e.estado == "0" %}
+                    <td >{{ forloop.counter  }}</td>
+                    {% if e.area %}
+                        <td style="color:red;">{{ e.area }}</td>
+                    {% else %}
+                        <td style="color:red;">Sin designar</td>
+                    {% endif %}
+
+                    <td style="color:red;">{{ e.proceso }}</td>
+                    <td style="color:red;">{{ e.subproceso }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+     </tbody>
+ </table>
+ {% else %}
+    <h4 style="text-align:center;">No existen SubProcesos !!</h4>
+ {% endif %}    
+
+</body>
+</html>

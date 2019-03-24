@@ -1,0 +1,281 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+          <ol class="breadcrumb">
+              <li>
+            <a href="#"><i class="fa fa-folder-open-o"></i> Gestión Documental</a>
+              </li>
+              <li class="active">
+                Administrar Directorios
+              </li>
+          </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered table-hover " id="tableEstadoDocumentos">
+                    <thead>
+                        <tr bgcolor="#bee5eb">
+                            <th class="text-center">PROCEDIMIENTO</th>
+                            <th class="text-center">COLABORADOR</th>
+                            <th class="text-center">ENCARGADO DE PROCESO</th>
+                            <th class="text-center">LIDER DE NORMA</th>
+                            <th class="text-center">ADMINISTRADOR</th>
+                            <th class="text-center"><span class="badge bg-blue"> ACCIONES</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for documento in estado_documentos %}
+                        <tr class="text-center">
+                            <!--PROCEDIMIENTO SUBIDO -->
+                            <td>{{ documento.proceso }}</td>
+    
+                            <!-- ESTADO COLABORADOR -->
+                            {% if documento.estado_colaborador == '0' %}
+                            <td class="text-center"><span class="badge bg-yellow"> Sin Archivos</span> </td>
+                            {% elif documento.estado_colaborador == '1' %}
+                                <td class="text-center"><span class="badge bg-green">Archivo subido</span></td>
+                            {% elif documento.estado_colaborador == '2' %}
+                                <td class="text-center"><span class="badge bg-red">Observaciones por Encargado de Proceso</span></td>
+                            {% elif documento.estado_colaborador == '3' %}
+                                <td class="text-center"><span class="badge bg-green">Aprobado por Encargado del Proceso</span></td>
+                            {% elif documento.estado_colaborador == '4' %}
+                                <td class="text-center"><span class="badge bg-red">Observaciones por Lider de Norma</span></td>
+                            {% elif documento.estado_colaborador == '5' %}
+                                <td class="text-center"><span class="badge bg-red">Aprobado por el Administrador</span></td>
+                            {% elif documento.estado_colaborador == '6' %}
+                                <td class="text-center"><span class="badge bg-yellow">Observaciones por el Administrador</span></td>
+                            {% endif %}
+    
+                            <!-- ESTADO ENCARGADO -->
+                            {% if documento.estado_encargado == '0'  %}
+                                <td class="text-center"><span class="badge bg-yellow">Pendiente de Subir Documento</span></td>
+                            {% elif documento.estado_encargado == '1'  %}
+                                <td class="text-center"><span class="badge bg-yellow"> Pendiente de Revision</span> </td>
+                            {% elif documento.estado_encargado == '2'  %}
+                                <td class="text-center"><span class="badge bg-green">Observaciones Realizadas</span></td>
+                            {% elif documento.estado_encargado == '3'  %}
+                                <td class="text-center"><span class="badge bg-green">Aprobado</span></td>
+                            {% elif documento.estado_encargado == '4'  %}
+                                <td class="text-center"><span class="badge bg-red">Observaciones por Lider de Norma</span></td>
+                            {% endif %}
+    
+                            <!-- ESTADO LIDER DE NORMA -->
+                            {% if documento.estado_lider == '0'  %}
+                                <td class="text-center"><span class="badge bg-yellow">Pendiente </span></td>
+                            {% elif documento.estado_lider == '1'  %}
+                                <td class="text-center"><span class="badge bg-aqua">En Revision</span></td>
+                            {% elif documento.estado_lider == '2'  %}
+                                <td class="text-center"><a href="javascript:void(0)" onclick="mostrarObservacionesLider('{{documento.id_proceso}}');"><i class="fa fa-eye"></i> Observaciones Realizadas</a></td>
+                            {% elif documento.estado_lider == '3'  %}
+                                <td class="text-center"><span class="badge bg-green">Aprobado</span></td>
+                            {% endif %}
+    
+    
+                                <!-- ESTADO ADMINISTRADOR -->
+                            {% if documento.estado_admin == '0' %}
+                                <td class="text-center"><span class="badge bg-yellow">Pendiente</span></td>
+                            {% elif documento.estado_admin == '1' %}
+                                <td class="text-center"><span class="badge bg-aqua">Pendiente de Aprobar</span></td>
+                            {% elif documento.estado_admin == '2' %}
+                                <td class="text-center"><span class="badge bg-red">Observaciones</span></td>
+                            {% elif documento.estado_admin == '3' %}
+                                <td class="text-center"><span class="badge bg-green">Aprobado y Vigente</span></td>
+                            {% endif %}
+                            <!-- ACCIONES -->
+                                <td class="text-center"> <a href="javascript:void(0)" onclick="javascript:modalMostrarEstado('{{documento.id_proceso}}');"><i class="fa fa-pencil"> Aprobar</i> </a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+
+        <!-- MODAL ESTADO -->
+        <div class="modal fade" id="modalEstadoDocumento" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <form action="/updateDocAdmin" id="form_estado_documento" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title" id="exampleModalLabel"><strong>Estado del Documento</strong> </h5>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="id_proceso" name="id_proceso">
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Estado:</label>
+                            <select id="estado_documento" name="estado_documento" class="form-control" onchange="javascript:mostrarDivObservaciones($(this).val())" required>
+                               <option selected disabled>Seleccione:</option>
+                                <option value="3">Aprobado</option>
+                                <option value="2">Observaciones</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="div_observaciones" style="display:none">
+                            <label for="Observaciones" class="value_required">Observaciones:</label>
+                            <textarea name="observaciones" id="observaciones" cols="30" rows="3" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check-square-o"></i> Grabar Datos</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+-->
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS 
+<script src="{% static 'module/gestionDocumental/directorios.js' %}"></script>
+-->
+<script>
+      /** 
+    * PARAMETRIZAR DATATABLES
+    */
+    var table = $('#tableEstadoDocumentos').DataTable( {
+     "pageLength": 5,
+     "scrollY": "250px",
+     "scrollCollapse": true,
+     "aLengthMenu": [[5, 10, 50, 100,-1], [5, 10, 50, 100,"Todo"]],
+     "iDisplayLength": 5,
+     "language": {
+     url: "/static/DataTables/es_ES.json"
+     }
+ });
+
+
+ function modalMostrarEstado(id_proceso){
+
+     //colocar id_proceso en input oculto
+     $("#id_proceso").val(id_proceso);
+
+     //reset form
+     document.getElementById('form_estado_documento').reset();
+
+     //mostrar modal
+     $("#modalEstadoDocumento").modal('show');
+
+ }//end function modalMostrarEstado
+
+
+ function mostrarDivObservaciones(estado_documento){
+   
+    
+    if(estado_documento ==2){
+        
+        //mostrar div observaciones
+        $("#div_observaciones").show();
+        //establecer campo requerido
+        $("#observaciones").prop('required',true);
+
+    }else{
+        
+       //ocultar div observaciones
+        $("#div_observaciones").hide();
+        //establecer campo requerido
+        $("#observaciones").prop('required',false);
+
+    }//end if
+    
+
+ }//end function mostrarDivObservaciones
+
+</script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+                <ol class="breadcrumb">
+                <li>
+                    <a href="javascript:void(0)"><i class="fa fa-briefcase"></i> Procesos</a>
+                </li>
+                <li class="active">
+                    Administrar Procedimientos
+                </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:15px;">
+
+
+            <!-- CREAR USUARIO -->
+            <div class="col-md-3">
+                <a href="#" class="btn btn-primary btn-block btn-sm" onclick="cargarModalProceso();">
+                    <i class="fa fa-plus-square-o">&nbsp;&nbsp;Crear Procedimiento</i>
+                </a> 
+            </div>
+    
+                <!-- GENERAR EXCEL -->
+            <div class="col-md-2">
+                <a href ="/excelProcesos" class="btn btn-success btn-block btn-sm" id="excel">
+                    <i class="fa fa-file-excel-o">&nbsp;&nbsp; Generar Excel</i>
+                </a>
+                
+            </div>
+            
+                <!-- GENERAR PDF -->
+            <div class="col-md-2">
+                <a href="/pdfProcesos" class="btn btn-danger btn-block btn-sm" id="pdf">
+                    <i class="fa fa-file-pdf-o">&nbsp;&nbsp; Generar Pdf</i>
+                </a>
+            </div>
+
+    </div>
+    <div class="row">
+        <!-- INPUT BUSCAR -->
+        <div class="col-md-2">
+            <input id="search_cells" type="text" class="form-control input-sm" placeholder="Buscar Proceso"/>
+        </div>
+    </div>
+
+        <!-- GRID USUARIOS-->
+      <table id="gridProcesos"></table>
+      <div id="pagerProcesos" style="color:black"></div>
+
+
+    <!-- MODA AREA-->
+
+    <div class="modal fade" id="modalProceso">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title"><strong>Procedimiento</strong> </h4>
+            </div>
+            <div class="modal-body">
+            <form id="formProceso"  method="POST"  role="form"  enctype="multipart/form-data" autocomplete="off" >
+                {% csrf_token %}
+                <div class="box-body">
+                    <input type="hidden" id="accion">
+                    <input type="hidden" name="carpeta_anterior" id="carpeta_anterior">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ formProceso.idProceso.as_hidden }}
+                            <label for="Proceso" class="value_required">Procedimiento:</label>
+                            {{ formProceso.proceso }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" id="div_directorio" >
+                                <label for="Directorio">Nombre del Directorio:</label>
+                                <input type="text" class="form-control" id="directorio" name="directorio" readonly>
+                            </div>
+                        </div>
+                    </div><!-- END ROW -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Directorio" class="value_required">Directorio Principal</label>
+                                <select name="directorio_principal" id="directorio_principal" class="form-control" onchange="obtenerSubDirectorios($(this).val());">
+                                    <option selected disabled>Seleccione:</option>
+                                    <option value="media/gestionDocumental/Apoyo/">Apoyo</option>
+                                    <option value="media/gestionDocumental/Estrategicos/">Estrategicos</option>
+                                    <option value="media/gestionDocumental/Operativos/">Operativos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" id="div_directorio_principal" >
+                                <label for="carpeta" class="value_required">Subdirectorios</label>
+                                <select class="form-control custom_class" id="destino" name="destino" required >
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="tipo Proceso" class="value_required">Tipo de Procedimiento:</label>
+                                {{ formProceso.tipo_proceso }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Estado" class="value_required">Estado:</label>
+                                {{ formProceso.estado }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="color:red;">*Campos Obligatorios </label>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer"> 
+                <button type="submit" class="btn btn-primary" > <!--onclick="confirmarGrabar();" -->
+                    <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                </button>
+                <!-- pull-left determina posicion-->
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i> 
+                </button>
+
+            </div>
+        </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+    <!--MODAL VINCULADOS -->
+    <div id="dialogProcesosVinculados" title="Proc. Vinculados">
+        <label for="Procedimientos">Procedimientos Vinculados</label>
+        <div id="contenido_modal"></div>
+    </div>
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CKEDITOR  -->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<link rel="stylesheet" href="{% static 'DataTables/select.dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!--JQUERY UI -->
+<script src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+<script src="{% static 'jquery-ui/ui.dialog.dialogResize.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/procesos.js' %}"></script>
+<script>
+
+{% if messages %}
+    {% for message in messages %}
+
+        swal('{{message}}', '', '{{ message.tags }}');
+
+    {% endfor %}
+{% endif %}
+</script>
+</body>
+
+</html>

@@ -1,0 +1,349 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+            <ol class="breadcrumb">
+                <li>
+                <a href="javascript:void(0)"><i class="fa fa-folder-open-o"></i> Gestión Documental</a>
+                </li>
+                <li class="active">
+                    Detalle Documentación
+                </li>
+            </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA 
+    <div class="row" style="margin-bottom:15px; margin-top:-15px;">
+
+   
+        <div class="col-md-2">
+            <a href="#" class="btn btn-primary btn-block btn-sm" data-toggle="modal" data-target="#crearDirectorioModal">
+                <i class="fa fa-folder-open">&nbsp;&nbsp;Crear Directorio</i>
+            </a> 
+        </div>
+
+        <div class="col-md-2">
+            <a href="#" class="btn btn-success btn-block btn-sm" data-toggle="modal" data-target="#subirArchivo">
+                <i class="fa fa-cloud-upload">&nbsp;&nbsp;Subir Archivo</i>
+            </a> 
+        </div>
+
+    </div>
+-->
+
+   <div class="row" style="margin-top:-15px;">
+
+        <!-- INPUT BUSCAR -->
+        <div class="col-md-2">
+            <input id="search_cells" type="text" class="form-control input-sm" placeholder="Buscar"/>
+        </div>
+   </div>
+    <div style="widows: 100px; overflow:auto;">
+    <table id="gridDocumentos"></table>
+    </div>
+    <div id="pagerGridDocumentos" style="color:black"></div>
+
+
+
+          <!-- MODAL CREAR DIRECTORIO -->
+          <div class="modal fade" id="crearDirectorioModal" tabindex="-1" role="dialog" aria-labelledby="crearDirectorioModal" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-window-close"></i>
+                        </button>
+                        <span class="badge bg-green">Crear Directorio</span>
+                    </div>
+                    <div class="modal-body">
+                      <form action="/createDirectorio" method="POST" autocomplete="off">
+                          {% csrf_token %}
+                            <div class="form-group">
+                                <label for="Destino" class="value_required">Seleccione la Carpeta Principal</label>
+                                <select name="destino" id="destino" class="form-control" required>
+                                    <option disabled selected>Seleccione:</option>
+                                    {% for directorio in directoriosList %}
+                                        <option value="{{directorio.ruta_absoluta}}">{{directorio.nombre.1}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="Nombre" class="value_required">Nombre del Directorio:</label>
+                                <input type="text" class="form-control" id="directorio" name="directorio" placeholder="Ingrese un nombre.." required>
+                            </div>
+                          <div class="row">
+                                <div class="col-md-4">
+                                    <label style="color:red;">*Campos Obligatorios </label>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">
+                          <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                      </button>
+                      <!-- pull-left determina posicion-->
+                      <button type="button" class="btn btn-danger " data-dismiss="modal">
+                          <i class="fa fa-close">&nbsp; Salir</i> 
+                      </button>
+                    </div>
+                  </form>
+                  </div>
+                </div>
+              </div>
+
+
+        <!-- modal MODIFICAR directorio -->
+    <div class="modal fade" id="editarDirectorioModal" tabindex="-1" role="dialog" aria-labelledby="editarDirectorioModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-window-close"></i>
+                    </button>
+                    <span class="badge bg-yellow">Cambiar Nombre</span>  
+                </div>
+                <div class="modal-body">
+                    <form action="/editDirectorio" method="POST" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="Nombre">Nombre Anterior:</label>
+                            <input type="text" class="form-control" id="nombreAnterior" name="nombreAnterior" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="Nombre">Nuevo Nombre:</label>
+                            <input type="text" class="form-control" id="nuevonombre" name="nuevonombre" placeholder="Ingrese el nuevo nombre.." required>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="subirArchivo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="/uploadArchivo" method="POST" autocomplete="off" role="form"  enctype="multipart/form-data">
+                    {% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-window-close"></i>
+                    </button>
+                    <span class="badge bg-aqua">Subir Archivo</span>  
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="Archivo">Seleccione un Archivo:</label>
+                        {{documentoForm.archivo}}
+                    </div>
+                    <div class="form-group">
+                        <label for="Destino">Seleccione la Carpeta de Destino</label>
+                        <select name="destino" id="destino" class="form-control" required>
+                            <option disabled selected>Seleccione:</option>
+                            {% for directorio in directoriosList %}
+                            <option value="{{directorio.ruta_absoluta}}">{{directorio.nombre.1}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Grabar Datos</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+      <!--SUBIR ARCHIVO -->
+      <div class="modal fade" id="subirArchivo">
+        <div class="modal-dialog">
+          <div class="modal-content">
+              <form action="/updateACtProce" method="POST" autocomplete="off" role="form"  enctype="multipart/form-data" id="formSubirArchivo">
+                  {% csrf_token %}
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <i class="fa fa-window-close"></i>
+                  </button>
+                  <span class="badge bg-aqua">Subir Archivo</span>
+              </div>
+              <div class="modal-body">
+                  <input type="hidden" name="id_documento" id="id_documento">
+                  <div class="form-group">
+                    <label for="Nombre" class="value_required">Nombre del POE:</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="Descripcion">Descripción:</label>
+                    <textarea name="descripcion" id="descripcion" class="form-control"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="Version" class="value_required">Versión:</label>
+                    <input type="text" name="version" id="version" class="form-control" required>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-4">
+                          <label style="color:red;">*Campos Obligatorios </label>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-primary">Grabar Datos</button>
+              </div>
+              </form>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <!--SUBIR ARCHIVO -->
+      <div class="modal fade" id="modalEditarProcedimiento">
+        <div class="modal-dialog">
+          <div class="modal-content">
+              <form  autocomplete="off" role="form" id="formEditarProcedimiento">
+                  {% csrf_token %}
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <i class="fa fa-window-close"></i>
+                  </button>
+                  <span class="badge bg-aqua">Editar Procedimiento</span>
+              </div>
+              <div class="modal-body">
+                  <input type="hidden" name="id_documento" id="id_documento">
+                  <div class="form-group">
+                    <label for="Nombre" class="value_required">Nombre del POE:</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="Descripcion">Descripción:</label>
+                    <textarea name="descripcion" id="descripcion" class="form-control"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="Version" class="value_required">Versión:</label>
+                    <input type="text" name="version" id="version" class="form-control" required>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-4">
+                          <label style="color:red;">*Campos Obligatorios </label>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-primary" onclick="javascript:grabarCambiosProcedimiento();">Grabar Datos</button>
+              </div>
+              </form>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/gestionDocumental/documentos.js' %}"></script>
+<script>
+
+
+    
+</script>
+</body>
+</html>

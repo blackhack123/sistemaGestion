@@ -1,0 +1,219 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  {% include "jefeArea/encabezadoJefe.html" %}
+
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>{{ request.session.nombreUsuario }}</p>
+                <!-- Status -->
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- MENU UNIFICADO -->
+        {% include 'user/menu.html' %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+                <ol class="breadcrumb">
+                    <li>
+                      <a href="javascript:void(0)"><i class="fa fa-folder-open-o"></i> Gestion Documental</a>
+                    </li>
+                    <li class="active">
+                     Directorios y Archivos
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <!--Contenido de la Pagina -->
+      <div class="row">
+          <div class="col-md-9">
+                    <div class="box box-success">
+        <div class="box-header with-border">
+
+          <h3 class="box-title">Directorios y Archivos</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          </div>
+        </div>
+        <div class="box-body">
+            {% for directorio in archivos_list %}
+                <!-- LISTADO DE DIRECTORIOS Y ARCHIVOS -->
+                <div id="directorio_principal_{{forloop.counter}}" class="demo"></div>
+            {% endfor %}
+            <!--
+          <table class="table table-bordered" id="tableDocumentos" >
+            <thead>
+              <tr bgcolor="#bee5eb">
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Versión</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for archivo in archivos_list %}
+              <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ archivo.nombre }}</td>
+                  <td>{{ archivo.descripcion }}</td>
+                  <td>{{ archivo.version }}</td>
+                  <td>
+                    {% if archivo.estado == 4 %}
+                      <i class="fa fa-check" style="color:green"> Activo y Vigente</i>
+                    {% elif archivo.estado == 1 or archivo.estado == 2 or archivo.estado == 3 %}
+                      <i class="fa fa-clock-o" style="color:red"> Documento en Revisión</i>
+                    {% elif archivo.estado == 5 %}
+                      <i class="fa fa-info-circle" style="color:red"> Documento no Vigente</i>
+                    {% endif %}
+                  </td>
+                  <td><a href="javascript:void(0)" onclick="abrirAchivo('{{ archivo.path }}')"><i class="fa fa-cloud-download"> Abrir Archivo</i></a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          -->
+        </div>
+      </div>
+          </div>
+      </div>
+
+
+<!-- OPCIONES DE APERTURA DE DOCUMENTO -->
+{% include 'abrirDocumento.html' %}
+
+    </section>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+-->
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+
+<!-- FILE TREE JS -->
+<script src="{% static 'FileTreeJs/jquery.easing.js' %}"></script>
+<script src="{% static 'FileTreeJs/jqueryFileTree.js' %}"></script>
+<link href="{% static 'FileTreeJs/jqueryFileTree.css' %}" rel="stylesheet">
+<!-- INDEX JS -->
+<script src="{% static 'module/colaborador.js' %}"></script>
+<script>
+
+  function descargar_archivo(url_carpeta){
+        
+      //separar los parametros pasados
+      var data=url_carpeta.split(',');
+      //consultar url y abrir
+      abrirAchivo(data[1]);
+
+  }//end function descargar_archivo
+
+//establece directorios y archivos
+{% for directorio in archivos_list %}
+
+    $('#directorio_principal_{{forloop.counter}}').fileTree({ root: '{{ directorio.ruta_absoluta }}', script: '/dir_list' }, function(file) {
+        /*
+        swal({
+          title: "Desea abrir el Documento ?",
+          text: "",
+          icon: "warning",
+          buttons: ['No', 'Si'],
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            //abrir archivo seleccionado
+            window.open(file, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+          } else {
+            return false;
+          }
+        });
+        */
+        $("#modalPermisos").modal('show');
+        $("#modalPermisos #documento").val(file);
+    });
+{% endfor %}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+          <ol class="breadcrumb">
+              <li>
+            <a href="#"><i class="fa fa-folder-open-o"></i> Gestión Documental</a>
+              </li>
+              <li class="active">
+                Directorios y Archivos
+              </li>
+          </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:15px;">
+        <!-- CREAR DIRECTORIO
+        <div class="col-md-3">
+            <a href="#" class="btn btn-primary btn-block btn-sm" data-toggle="modal" data-target="#crearDirectorioModal">
+                <i class="fa fa-plus">&nbsp;&nbsp;Crear Directorio</i>
+            </a>
+        </div>
+        -->
+        <!-- ELIMINAR DIRECTORIO
+        <div class="col-md-3">
+            <a href="#" class="btn btn-danger btn-block btn-sm" data-toggle="modal" data-target="#eliminarDirectorioModal">
+                <i class="fa fa-remove">&nbsp;&nbsp;Eliminar Directorio</i>
+            </a>
+        </div>
+        -->
+    </div>
+    <div class="row">
+            <!-- DESIGNAR DIRECTORIO
+            <div class="col-md-3">
+                <a href="#" class="btn btn-success btn-block btn-sm" data-toggle="modal" data-target="#designarDirectorioModal">
+                    <i class="fa fa-folder">&nbsp;&nbsp;Designar Directorio</i>
+                </a> 
+            </div>
+            -->
+    </div>
+
+        <div class="row">
+            <div class="col-md-9">
+                <div class="box box-default">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Directorios y Archivos</h3>
+
+                      <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                      </div>
+                    </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <!-- LISTADO DE DIRECTORIOS Y ARCHIVOS -->
+                    <div id="directorios_principales" class="demo"></div>
+                </div>
+                <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+
+
+          <!-- MODAL CREAR DIRECTORIO -->
+          <div class="modal fade" id="crearDirectorioModal" tabindex="-1" role="dialog" aria-labelledby="crearDirectorioModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-window-close"></i>
+                    </button>
+                    <span class="badge bg-green">Crear Directorio</span>
+                </div>
+                <div class="modal-body">
+                  <form action="/createDirectorio" method="POST" autocomplete="off">
+                      {% csrf_token %}
+                      <div class="form-group">
+                          <label for="Nombre">Nombre directorio:</label>
+                          <input type="text" class="form-control" id="directorio" name="directorio" placeholder="Ingrese un nombre.." required>
+                      </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">
+                      <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                  </button>
+                  <!-- pull-left determina posicion-->
+                  <button type="button" class="btn btn-danger " data-dismiss="modal">
+                      <i class="fa fa-close">&nbsp; Salir</i> 
+                  </button>
+                </div>
+              </form>
+              </div>
+            </div>
+          </div>
+
+
+
+          <!-- modal MODIFICAR directorio -->
+          <div class="modal fade" id="editarDirectorioModal" tabindex="-1" role="dialog" aria-labelledby="editarDirectorioModal" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <i class="fa fa-window-close"></i>
+                      </button>
+                      <span class="badge bg-yellow">Cambiar Nombre</span>  
+                  </div>
+                  <div class="modal-body">
+                    <form action="/editDirectorio" method="POST" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="Nombre">Nombre Anterior:</label>
+                            <input type="text" class="form-control" id="nombreAnterior" name="nombreAnterior" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="Nombre">Nuevo Nombre:</label>
+                            <input type="text" class="form-control" id="nuevonombre" name="nuevonombre" placeholder="Ingrese el nuevo nombre.." required>
+                        </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                  </div>
+                </form>
+                </div>
+              </div>
+            </div>
+
+
+
+          <!-- modal eliminar directorio -->
+          <div class="modal fade" id="eliminarDirectorioModal" tabindex="-1" role="dialog" aria-labelledby="eliminarDirectorioModal" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <i class="fa fa-window-close"></i>
+                      </button>
+                      <span class="badge bg-red">Eliminar Directorio</span>  
+                  </div>
+                  <div class="modal-body">
+                    <form action="/deleteDirectorio" method="POST" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="Nombre">Nombre directorio:</label>
+                            <input type="text" class="form-control" id="directorio" name="directorio" placeholder="Ingrese un nombre.." required>
+                        </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                  </div>
+                </form>
+                </div>
+              </div>
+            </div>
+  
+
+
+
+
+          <!-- modal DESIGNAR directorio -->
+          <div class="modal fade" id="designarDirectorioModal" tabindex="-1" role="dialog" aria-labelledby="designarDirectorioModal" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <i class="fa fa-window-close"></i>
+                      </button>
+                      <span class="badge bg-red">Designar Directorio</span>  
+                  </div>
+                  <div class="modal-body">
+                    <form action="/designarDirectorio" method="POST" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="Nombre">Personal:</label>
+                            <select name="id_personal" id="id_personal" class="form-control" required>
+                              {% for persona in personal %}
+                              <option value="{{persona.id}}">{{persona.nombre}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="Nombre">Directorio:</label>
+                            <select name="directorio" id="directorio" class="form-control" required>
+                              {% for directorio in fileList %}
+                              <option name="{{directorio}}" id="{{directorio}}}" value="{{directorio}}">{{directorio}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                        
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                  </div>
+                </form>
+                </div>
+              </div>
+            </div>
+  
+
+<!-- aCCIONES -->
+<div class="modal fade" id="modalAccionDocumento" tabindex="-1" role="dialog" aria-labelledby="modalAccionDocumento" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+          <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">Acción</span></h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <input type="hidden" id="documento">
+            <label for="Acciones">Acción:</label>
+            <select name="acciones" id="acciones" class="form-control">
+                <option selected disabled>Seleccione</option>
+                <option value="1">Abrir</option>
+                <option value="2">Eliminar</option>
+            </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+        <button type="button" class="btn btn-primary" onclick="accionDocumento();">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- FILE TREE JS -->
+<script src="{% static 'FileTreeJs/jquery.easing.js' %}"></script>
+<script src="{% static 'FileTreeJs/jqueryFileTree.js' %}"></script>
+<link href="{% static 'FileTreeJs/jqueryFileTree.css' %}" rel="stylesheet">
+
+<!-- INDEX JS -->
+<script src="{% static 'module/gestionDocumental/directorios.js' %}"></script>
+</body>
+</html>

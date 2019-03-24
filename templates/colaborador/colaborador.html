@@ -1,0 +1,356 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <style>
+             /*.ui-jqgrid {font-size:0.8em}*/
+             .ui-jqgrid{position:relative;font-size:12px;}
+
+    </style>
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header">
+
+    <!-- Logo -->
+    <span href="" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b><i class="fa fa-cogs"></i> </b></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><img src="{% static 'images/logos/gear6.jpg' %}" width="65" height="41" style="border: 3px solid #ddd; border-radius: 4px;"><b> &nbsp;Menú</span>
+    </span>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Menú de Navegacion</span>
+      </a>
+        <div class="navbar-custom-menu " style="margin-right:40px">
+            <ul class="nav navbar-nav ">
+                <li class="dropdown notifications-menu">
+                     <a href="http://www.rgmanagementcorp.com"  target="_blank">
+                        <img src="{% static 'images/rg/help2.png' %}"  width="60" height="30" style="background-color:white;border: 3px solid #ddd; border-radius: 4px;" >
+                        <span class="label label-danger"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+      <!-- Navbar Right Menu -->
+        <div class="navbar-custom-menu pull-left" style="margin-left:80px">
+            <ul class="nav navbar-nav">
+                <li class="dropdown notifications-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-bell-o"></i>
+                  <span class="label label-danger"><i class="fa fa-info text-white"></i></span>
+                </a>
+                    <ul class="dropdown-menu">
+                    {% include "user/notificaciones.html" %}
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+        <div class="user-panel">
+            <div class="pull-left image">
+              <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+              <p>{{ request.session.nombreUsuario }}</p>
+              <!-- Status -->
+              <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- MENU UNIFICADO -->
+        {% include 'user/menu.html' %}
+
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+                <ol class="breadcrumb">
+                    <li>
+                      <a href="javascript:void(0)"><i class="fa fa-folder-open-o"></i> Gestión Documental</a>
+                    </li>
+                    <li class="active">
+                     Administrar 
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+
+        <div class="row">
+            <div class="col-md-9">
+                <div class="box box-default">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Directorios y Archivos</h3>
+
+                      <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                      </div>
+                    </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    {% for directorio in archivos_list %}
+                    <!-- LISTADO DE DIRECTORIOS Y ARCHIVOS -->
+                    <div id="directorio_principal_{{forloop.counter}}" class="demo"></div>
+                    {% endfor %}
+                </div>
+                <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+
+
+     
+
+      <!--SUBIR ARCHIVO -->
+      <div class="modal fade" id="subirArchivo">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <form action="/updateACtProce" method="POST" autocomplete="off" role="form"  enctype="multipart/form-data" id="formSubirArchivo">
+                      {% csrf_token %}
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <i class="fa fa-window-close"></i>
+                      </button>
+                      <span class="badge bg-aqua">Subir Archivo</span>  
+                  </div>
+                  <div class="modal-body">
+                      <div class="form-group">
+                          <label for="Archivo" class="value_required">Seleccione un Archivo:</label>
+                          {{documentoForm.archivo}}
+                      </div>
+                      <div class="form-group">
+                        <label for="Nombre" class="value_required">Nombre:</label>
+                        <input type="text" class="form-control" name="nombre" id="nombre">
+                      </div>
+                      <div class="form-group">
+                        <label for="Descripcion" class="value_required">Descripción:</label>
+                        <textarea name="descripcion" id="descripcion" class="form-control"></textarea>
+                      </div>
+                      <div class="form-group">
+                        <label for="Version" class="value_required">Versión:</label>
+                        <input type="text" class="form-control" name="version" id="version">
+                      </div>
+                      <div class="form-group">
+                        <label for="Proceso" class="value_required">Proceso:</label>
+                        <select name="proceso" id="proceso" class="form-control">
+                          <option selected disabled>Seleccione:</option>
+                          {% for area in areas %}
+                            <option value="{{ area.id }}">{{ area.proceso }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="Procedimientos" class="value_required">Procedimiento:</label>
+                        <select id="procedimiento" name="procedimiento" class="form-control" required onchange="setDestino();">
+                          <option disabled selected>Seleccione:</option>
+                        </select>
+                      </div>
+                      <input type="hidden" id="destino" name="destino" readonly>
+                      <div class="row">
+                          <div class="col-md-4">
+                              <label style="color:red;">*Campos Obligatorios </label>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                      <button type="submit" class="btn btn-primary">Grabar Datos</button>
+                  </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+
+      <!--MODAL REEEMPLAZAR ARCHIVO -->
+      <div class="modal fade" id="modalReemplazarArchivo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <form action="/reemplazarArchivo" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  <h4 class="modal-title" id="exampleModalLabel"><strong>Reemplazar Archivo</strong></h4 >
+                </div>
+                <div class="modal-body">               
+                    <div class="form-group">
+                        <label for="Archivo" class="value_required">Seleccione un Archivo:</label>
+                       {{reemplazarForm.archivo}}
+                    </div>
+                    {{reemplazarForm.archivo_anterior.as_hidden}}
+                    {{reemplazarForm.carpeta_anterior.as_hidden}}
+                    <div class="form-group">
+                      <label for="Procedimientos" class="value_required">Procedimiento:</label>
+                      <select id="procedimiento" name="procedimiento" class="form-control" required>
+                        <option disabled selected>Seleccione:</option>
+                        {% for procedimiento in alldirectorys %}
+                          <option value="{{procedimiento.id}}">{{ procedimiento.proceso }} </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+                  <button type="submit" class="btn btn-primary">Grabar Datos</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
+
+<!-- OPCIONES DE APERTURA DE DOCUMENTO -->
+{% include 'abrirDocumento.html' %}
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+-->
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+
+    <!-- FILE TREE JS -->
+<script src="{% static 'FileTreeJs/jquery.easing.js' %}"></script>
+<script src="{% static 'FileTreeJs/jqueryFileTree.js' %}"></script>
+<link href="{% static 'FileTreeJs/jqueryFileTree.css' %}" rel="stylesheet">
+<!-- PULSATE JS -->
+<script src="{% static 'pulsateJs/jquery.pulsate.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/colaborador.js' %}"></script>
+<script>
+
+    $('.fa-bell-o').pulsate({
+      color: '#D33636',
+      reach: 10,
+      speed: 1000,
+      pause: 0,
+      glow: true,
+      repeat: true,
+      onHover: false
+    });
+
+
+/*
+  function descargar_archivo(path){
+
+      //consultar url y abrir
+      abrirAchivo(data[1]);
+
+  }//end function descargar_archivo
+*/
+//listar directorio y archivos
+{% for directorio in archivos_list %}
+
+    $('#directorio_principal_{{forloop.counter}}').fileTree({ root: '{{ directorio.ruta_absoluta }}', script: '/dir_list' }, function(file) {
+        /*
+        swal({
+          title: "Desea abrir el Documento ?",
+          text: "",
+          icon: "warning",
+          buttons: ['No', 'Si'],
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            //abrir archivo seleccionado
+            window.open(file, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+          } else {
+            return false;
+          }
+        });
+        */
+        $("#modalPermisos").modal('show');
+        $("#modalPermisos #documento").val(file);
+    });
+{% endfor %}
+
+</script>
+</body>
+</html>

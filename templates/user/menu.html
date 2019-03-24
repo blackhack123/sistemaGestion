@@ -1,0 +1,110 @@
+   {% load staticfiles %}
+  <!-- MENU -->
+  <ul class="sidebar-menu tree" data-widget="tree">
+
+     <!-- OPCIONES COLABORADOR -->
+    {% if request.session.modulo_colaborador == "on" %}
+
+    <li class="header text-center" >Menú</li>
+    <!--- DOCUMENTOS-->
+    <li class="treeview ">
+      <a href="#"><i class="fa fa-child"></i> <span>Colaborador</span>
+          <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+          </span>
+      </a>
+      <ul class="treeview-menu">
+          <!-- GESTION DOCUMENTAL -->
+          <li><a href="/estadoDocColaborador"><i class="fa fa-circle-o"></i>Estado Documentación</a></li>
+          <li><a href="/colaborador"><i class="fa fa-circle-o"></i>Directorios y Archivos</a></li>
+          <!-- SAC/ SEGUIMIENTOS -->
+          <li ><a href="/colSeguimientos"><i class="fa fa-circle-o"></i>Administrar Seguimientos</a></li>
+      </ul>
+    </li>
+
+    {% endif %}
+
+
+    <!-- OPCIONES DIRECTOR DE AREA -->
+    {% if request.session.modulo_director == "on" %}
+
+    <!--- DOCUMENTOS-->
+    <li class="treeview">
+        <a href="#"><i class="fa fa-street-view"></i> <span>Director de Área</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <!-- GESTION DOCUMENTAL -->
+            <li ><a href="/adminJefeDoc"><i class="fa fa-circle-o"></i>Directorios y Archivos</a></li>
+            <li><a href="/estadoDocJefe"><i class="fa fa-circle-o"></i>Estado Documentación</a></li>
+            <!-- SAC -->
+            <li ><a href="/jefe"><i class="fa fa-circle-o"></i>Administrar SAC</a></li>
+        </ul>
+    </li>
+
+    {% endif %}
+
+
+    <!-- MENU LIDER DE NORMA -->
+    {% if request.session.modulo_lider_norma == 'on' %}
+    <li class="treeview">
+        <a href="#"><i class="fa fa-book"></i> <span>Líder de Norma</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/lid_norma"><i class="fa fa-circle-o"></i>Directorios y Archivos</a></li>
+            <li ><a href="/estadodoc_lidernorma"><i class="fa fa-circle-o"></i>Estado Documentos</a></li>
+        </ul>
+    </li>
+    {% endif %}
+
+
+    <!-- MENU AUDITOR -->
+    {% if request.session.modulo_auditor == 'on' %}
+    <li class="treeview">
+        <a href="#"><i class="fa fa-industry"></i> <span>Auditor</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/auditor"><i class="fa fa-circle-o"></i>Auditorias Designadas</a></li>
+            <li ><a href="/auditDoc"><i class="fa fa-circle-o"></i>Preparar Auditoría</a></li>
+            <li><a href="/audiSac"><i class="fa fa-circle-o"></i>Crear SAC </a></li>
+        </ul>
+    </li>
+    {% endif %}
+
+    <!-- MENU AUDITOR LIDER --->
+    {% if request.session.modulo_auditor_lider == 'on' %}
+    <li class="treeview">
+        <a href="#"><i class="fa fa-user"></i> <span>Auditor Líder</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/adminLiderDoc"><i class="fa fa-circle-o"></i>Directorios y Archivos</a></li>
+            <li ><a href="/estadoDocLider"><i class="fa fa-circle-o"></i>Estado Documentos</a></li>
+            <li ><a href="/adminSacLider"><i class="fa fa-circle-o"></i>Administrar SAC</a></li>
+        </ul>
+    </li>
+    {% endif %}
+
+    <!--- CERRAR SESION-->
+    <li class="treeview">
+      <a href="#"><i class="fa fa-sign-out"></i> <span>Salir</span>
+        <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+      </a>
+      <ul class="treeview-menu">
+        <li ><a href="/logout"><i class="fa fa-circle-o"></i>Cerrar Sesión</a></li>
+      </ul>
+    </li>
+
+  </ul>

@@ -1,0 +1,377 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+{% include "encabezado.html" %}
+
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+            <ol class="breadcrumb">
+                <li>
+                <a href="javascript:void(0)"><i class="fa fa-book"></i> Normas</a>
+                </li>
+                <li class="active">
+                    Administrar Cláusulas
+                </li>
+            </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+        <!-- GRID USUARIOS-->
+        <div class="box box-default">
+            <!--
+            <div class="box-header with-border">
+              <h3 class="box-title">Clausulas</h3>
+                
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+              </div>
+            </div>
+            -->
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+                    <!-- CREAR CLAUSULA -->
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-primary btn-block btn-sm" onclick="cargarModalClausula();" id="btn_crearclausula">
+                            <i class="fa fa-plus">&nbsp;&nbsp;Crear Cláusula</i>
+                        </a> 
+                    </div>
+                    <!-- REPORTE EXCEL
+                    <div class="col-md-2">
+                        <a href="/excel_clausulas" class="btn btn-success btn-block btn-sm">
+                            <i class="fa fa-file-excel-o">&nbsp;&nbsp;Reporte Excel</i>
+                        </a>
+                    </div>
+                    -->
+                </div>
+              <div class="row" style="margin-top:15px;">
+                  
+                <div class="col-md-12">
+                    <table id="tableClausulas" class="table table-striped table-bordered" >
+                        <thead class="thead-dark">
+                            <tr bgcolor="#bee5eb">
+                                <th class="text-center"  style="display:none">PK</th>
+                                <th class="text-center" style="display:none;">ID_NORMA</th>
+                                <th class="text-center">NORMA</th>
+                                <th class="text-center">CLÁUSULA</th>
+                                <th class="text-center">PROCEDIMIENTO VINCULADO</th>
+                                <th class="text-center">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for clausula in clausulas %}
+                            <tr>
+                                <td class="text-center" style="display:none">{{ clausula.id}}</td>
+                                <td class="text-center" width="40%" style="display:none;">{{ clausula.id_norma}}</td>
+                                <td class="text-center" width="10%">{{ clausula.norma}}</td>
+                                <td class="text-center" width="10%">{{ clausula.clausula }}</td>
+                                {% if clausula.flag == 1 %}
+                                    <td  width="15%"><a href="javascript:void(0)" onclick="javascript:consultar_procesos('{{clausula.id}}');"><i class="fa fa-check-square" style="color:green"></i> Procedimiento Vinculado</a></td>
+                                {% else %}
+                                    <td  width="15%"><a href="javascript:void(0)" onclick="javascript:swal({
+                                        title: 'Debe designar un Proceso a la Clausula',
+                                        text: 'Desea Vincular un Proceso ??',
+                                        icon: 'info',
+                                        buttons: ['No', 'Si'],
+                                        dangerMode: false,
+                                    })
+                                    .then((willDelete) => {
+                                        if(willDelete){
+                                            sessionStorage.setItem('id_norma', '{{ clausula.id_norma }}');
+                                            sessionStorage.setItem('id_clausula', '{{ clausula.id }}');
+                                            window.location = '/vincularNormas';
+                                        }//end if
+                                    });
+                                        "><i class="fa fa-window-close" style="color:red"></i> Procedimiento No Vinculado </a></td>
+                                {% endif %}
+                                <td class="text-center" width="10%" >
+
+                                    <a class="btn btn-xs" href="javascript:void(0)" title="Visualizar" onclick="consultar_clausula('{{ clausula.id }}', 'mostrar');">
+                                        <i class="fa fa-envelope-o" style="color:orange"> </i>&nbsp;Abrir
+                                    </a>
+
+                                    <a class="btn btn-xs" href="javascript:void(0)" onclick="getClausula('{{ clausula.id }}');" title="Editar">
+                                        <i class="glyphicon glyphicon-pencil" style="color:orange"> </i>&nbsp; Editar
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table><br>
+                </div>
+   
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+
+
+<!-- SELECCION NORMA -->
+<div class="modal fade" id="modalClausula" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title"><strong>Cláusula</strong> </h4>
+        </div>
+        <div class="modal-body">
+        <form id="form_clausula">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                            <input type="hidden" id="id_clausula">
+                            <input type="hidden" id="accion">
+                        <label for="Proceso" class="value_required">Norma:</label>
+                        <select id="id_norma" class="form-control" required>
+                            <option selected disabled>Seleccione:</option>
+                            {% for norma in normas %}
+                                <option id="{{ norma.id }}" value="{{ norma.id }}">{{ norma.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="value_required"> El Pdf es escaneado:</label>
+                        <select class="form-control" id="escaneado_pdf">
+                            <option selected disabled>Seleccione:</option>
+                            <option value="1">Si</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group" id="div_numeroPagina">
+                        <label for="Pagina" class="value_required">Número de Página:</label>
+                        <input type="number" id="numero_pagina" name="numero_pagina" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" id="nombre_clausula">
+                <label for="Clausula" class="value_required">Cláusula</label>
+                <input type="text" id="clausula" class="form-control" placeholder="Ejemplo (1.0)">
+            </div>
+
+            <div class="form-group" id="ckeditor">
+                <label for="Clausula" class="value_required">Detalle de la Cláusula:</label>
+                <textarea name="detalleClausula" id="detalleClausula">     
+                </textarea>
+            </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="confirmarGrabar();"> 
+                <i class="fa fa-check-square-o"  id="grabar">&nbsp;Aceptar</i>
+            </button>
+            <button type="button" class="btn btn-danger " data-dismiss="modal">
+                <i class="fa fa-close">&nbsp; Salir</i> 
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- MODAL EDITAR CLAUSULA -->
+    <div class="modal fade" id="editarClausula" tabindex="-1" role="dialog" aria-labelledby="editarClausula" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-yellow">Editar</span></h5>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                    <input type="hidden" id="id_clausula">
+                    <input type="hidden" id="accion" value="update">
+                <label for="Proceso" class="value_required">Norma:</label>
+                <select id="id_norma" class="form-control" required>
+                    <option selected disabled>Seleccione:</option>
+                    {% for norma in normas %}
+                    <option id="{{ norma.id }}" value="{{ norma.id }}">{{ norma.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" id="nombre_clausula">
+                <label for="Clausula" class="value_required">Cláusula</label>
+                <input type="text" id="clausula" class="form-control" placeholder="Ejemplo (1.0)">
+            </div>
+            <div class="form-group" id="ckeditor">
+                <label for="Clausula" class="value_required">Detalle de la Cláusula:</label>
+                <textarea name="detalleEditarClausula" id="detalleEditarClausula"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+
+            <button type="button" class="btn btn-primary" onclick="confirmarGrabarUpdate();">Grabar Datos</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!--  MODAL CLAUSULA -->
+    <div class="modal fade" id="modalClausulaConsultada" tabindex="-1" role="dialog" aria-labelledby="modalClausulaConsultada" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title badge bg-green" id="titulo_clausula_consultada"></h4>
+          </div>
+          <div class="modal-body">
+            <textarea id="contenido_clausula"  class="form-control" rows="15" readonly>
+            </textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- MODAL PROCEDIMIENTO VINCULADOS Y ARCHIVOS -->
+    <div class="modal fade" id="modalProcedimientos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title" id="exampleModalLabel">Procedimientos Vinculados</h5>
+          </div>
+          <div class="modal-body">
+            <form id="form_directorios">
+                <div class="form-group">
+                    <label for="Procedimientos Vinculados"><span class="badge bg-green">Procedimientos Vinculados:</span></label>
+                    <ul name="procedimientos" id="procedimientos" readonly></ul>
+                </div>
+                <div class="form-group">
+                    <label for="Directorios"><span class="badge bg-green">Directorios y Archivos:</span></label>
+                    <div id="contenedor_directorios"></div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+-->
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- WAIT ME JS-->
+<link rel="stylesheet" href="{% static 'waitMe/waitMe.css' %}">
+<script src="{% static 'waitMe/waitMe.js' %}"></script>
+<!-- CKEDITOR JS-->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+<!-- SWEET ALERT-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<!-- VALIDACIONES -->
+<script src="{% static 'module/validaciones.js' %}"></script>
+
+    <!-- FILE TREE JS -->
+<script src="{% static 'FileTreeJs/jquery.easing.js' %}"></script>
+<script src="{% static 'FileTreeJs/jqueryFileTree.js' %}"></script>
+<link href="{% static 'FileTreeJs/jqueryFileTree.css' %}" rel="stylesheet">
+<!-- INDEX JS -->
+<script src="{% static 'module/clausulas.js' %}"></script>
+<!--
+<script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js' type="module"></script>
+-->
+</body>
+</html>

@@ -1,0 +1,222 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        SubProcesos
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:15px;">
+
+        <!-- CREAR SUBPROCESO -->
+        <div class="col-md-3">
+            <a href="#" class="btn btn-primary btn-block btn-sm" data-toggle="modal" data-target="#subProcesoModal">
+                <i class="fa fa-plus-square-o">&nbsp;&nbsp;Crear SubProceso</i>
+            </a> 
+        </div>
+
+
+        <!-- EXCEL SUBPROCESO -->
+        <div class="col-md-3">
+            <a href="/excelSubProcesos/" class="btn btn-success btn-block btn-sm">
+                <i class="fa fa-file-excel-o">&nbsp;&nbsp;Generar Excel</i>
+            </a>  
+        </div>
+
+        <!-- PDF SUBPROCESO -->
+        <div class="col-md-3">
+            <a href="/pdfSubProcesos/" class="btn btn-danger btn-block btn-sm">
+                <i class="fa fa-file-excel-o">&nbsp;&nbsp;Generar PDF</i>
+            </a>  
+        </div>
+
+    </div>
+   <div class="row">
+        <!-- buscar -->
+        <div class="col-sm-3">
+            <input type="text" id="search_cells" class="form-control" placeholder="Buscar ..">
+        </div>
+   </div>
+    <!-- GRID USUARIOS-->
+    <table id="gridSubProcesos"></table>
+    <div id="pagerSubProcesos" style="color:black"></div>
+
+
+
+
+    <!-- MODA SUBPROCESO-->
+
+    <div class="modal fade" id="subProcesoModal">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title"><strong>SubProceso</strong> </h4>
+            </div>
+            <div class="modal-body">
+            <form id="formSubProceso"  action="/insertSubProceso/" method="POST"  role="form"  enctype="multipart/form-data" autocomplete="off" >
+                {% csrf_token %}
+                <div class="box-body">
+          
+                    <input type="hidden" id="id_subproceso" name="id_subproceso">
+                    <input type="hidden" id="accion">
+                    <div class="form-group">
+                        <label for="Procesos" class="value_required">Area:</label>
+                            <select name="id_area" id="id_area" class="form-control" onchange="mostrarProcesos($(this).val());" required>
+                                <option selected disabled>Seleccione: </option>
+                                {% for area in areas %}
+                                <option value="{{ area.id}}">{{area.area}}</option>
+                                {% endfor %}
+                            </select>
+                    </div>
+                    <div class="form-group" id="divProcesos" style="display:none;">
+                        <label for="Procesos" class="value_required">Proceso:</label>
+                            <select name="id_proceso" id="id_proceso" class="form-control" required>
+                            </select>
+                    </div>
+                    <div class="form-group" id="divDocumento">
+                        <input type="button" id="btnMostrarDocumento" value="Ver Archivo">
+                        <input type="button" id="btnReemplazarDocumento" value="Reemplazar" onclick="$('#divDocumento').hide(); $('#divSelectDocumento').show();">
+                    </div>
+                    <div class="form-group" id="divSelectDocumento">
+                        <label for="Archivo">Documento:</label>
+                        <input type="file" name="documento" id="documento" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="Subproceso" class="value_required">Subproceso:</label>
+                        <input type="text" id="subproceso" name="subproceso" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Estado" class="value_required">Estado:</label>
+                        <select  id="estado" name="estado" class="form-control" required>
+                            <option   disabled selected>Seleccione:</option>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="color:red;">*Campos Obligatorios </label>
+                        </div>
+                    </div> 
+                </div> 
+                <div class="modal-footer"> 
+                    <button type="submit" class="btn btn-primary" > <!--onclick="confirmarGrabar();" -->
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+
+                </div>
+            </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CKEDITOR  -->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+
+
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/subprocesos.js' %}"></script>
+</body>
+</html>

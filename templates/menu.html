@@ -1,0 +1,160 @@
+{% load staticfiles %}
+<!-- AREA USUARIO -->
+<div class="user-panel">
+    <div class="pull-left image">
+        <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+    </div>
+    <div class="pull-left info">
+        <p>{{ request.session.nombreUsuario }}</p>
+        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+    </div>
+</div>
+
+<ul class="sidebar-menu tree" data-widget="tree">
+    <li class="header">Menú</li>
+    {% for permiso in request.session.permisos %}
+
+        {% if permiso.has_personal == "on" %}
+            <!--- PERSONAL-->
+            <li class="treeview">
+                <a href="#"><i class="fa fa-child"></i> <span>Personal</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li ><a href="/cargo"><i class="fa fa-circle-o"></i>Administrar Cargos</a></li>
+                    <li ><a href="/personal"><i class="fa fa-circle-o"></i>Administrar Personal</a></li>
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if permiso.has_usuario == "on" %}
+            <!--- USUARIOS-->
+            <li class="treeview ">
+            <a href="#"><i class="fa fa-users"></i> <span>Usuarios</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li ><a href="/home"><i class="fa fa-circle-o"></i>Administrar Usuarios</a></li>
+            </ul>
+            </li>
+        {% endif %}
+
+        {% if permiso.has_area == "on" %}
+            <!--- AREAS-->
+            <li class="treeview">
+                <a href="#"><i class="fa fa-briefcase"></i> <span>Procesos</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li ><a href="/areas"><i class="fa fa-circle-o"></i>Administrar Procesos</a></li>
+                    <li ><a href="/procesos"><i class="fa fa-circle-o"></i>Administrar Procedimientos</a></li>
+                   <!--
+                    <li ><a href="/subprocesos"><i class="fa fa-circle-o"></i>Administrar SubProcesos</a></li>
+                   -->
+                    <li ><a href="/vincularProcesos"><i class="fa fa-circle-o"></i>Vincular Procedimientos</a></li>
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if permiso.has_norma == "on" %}
+            <!--- NORMAS-->
+            <li class="treeview ">
+                <a href="#"><i class="fa fa-book"></i> <span>Normas</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li ><a href="/normas"><i class="fa fa-circle-o"></i>Administrar Normas </a></li>
+                    <li ><a href="/clausulas"><i class="fa fa-circle-o"></i>Administrar Cláusulas </a></li>
+                    <li ><a href="/vincularNormas"><i class="fa fa-circle-o"></i>Vincular Normas </a></li>
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if permiso.has_documental == "on" %}
+        <!--- DOCUMENTOS-->
+        <li class="treeview ">
+            <a href="#"><i class="fa fa-folder-open-o"></i> <span>Gestión Documental</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li ><a href="/directorios"><i class="fa fa-circle-o"></i>Directorios y Archivos</a></li>
+                <li><a href="/documentos"><i class="fa fa-circle-o"></i>Detalle Documentación </a></li>
+                <li><a href="/estadoDocAdmin"><i class="fa fa-circle-o"></i>Estado Documentación </a></li>
+            </ul>
+        </li>
+        {% endif %}
+
+        {% if permiso.has_auditoria == "on" %}
+            <!--- AUDITORIA-->
+            <li class="treeview ">
+                <a href="#"><i class="fa fa-industry"></i> <span>Auditoría</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li ><a href="/auditoria"><i class="fa fa-circle-o"></i>Administrar Auditores </a></li>
+                    <li><a href="/estabAuditoria"><i class="fa fa-circle-o"></i>Establecer Auditoría</a></li>
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if permiso.has_sac == "on" %}
+            <!--- SACS-->
+            <li class="treeview ">
+                    <a href="#"><i class="fa fa-clone"></i> <span>Sacs</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li ><a href="/sac"><i class="fa fa-circle-o"></i>Administrar Sacs </a></li>
+                        <li ><a href="/historico_sac"><i class="fa fa-circle-o"></i>Histórico </a></li>
+                    </ul>
+            </li>
+        {% endif %}
+
+        {% if permiso.has_indicadores == "on" %}
+        <!--- Indicadores -->
+        <li class="treeview ">
+            <a href="#"><i class="fa fa-pie-chart"></i> <span>Indicadores</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li ><a href="/catalogos"><i class="fa fa-circle-o"></i>Catágolos </a></li>
+                <li ><a href="/planificacion"><i class="fa fa-circle-o"></i>Planificación </a></li>
+                <li ><a href="/reportes"><i class="fa fa-circle-o"></i>Reportes</a></li>
+            </ul>
+        </li>
+        {% endif %}
+
+
+
+    {% endfor %}
+
+
+    <!--- CERRAR SESION -->
+    <li class="treeview">
+        <a href="#"><i class="fa fa-sign-out"></i> <span>Salir</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li ><a href="/logout"><i class="fa fa-circle-o"></i>Cerrar Sesión</a></li>
+        </ul>
+    </li>
+    
+</ul>

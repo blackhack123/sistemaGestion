@@ -1,0 +1,135 @@
+<div class="tab-pane fade navbar-default" id="areasdos" role="tabpanel" aria-labelledby="areasdos-tab">
+
+    <!--CONTENIDO DE PAGINA -->
+<div class="row" style="margin-bottom:5px; margin-left:5px;">
+<br>
+    <!-- CREAR USUARIO -->
+    <div class="col-md-2">
+        <a href="#" class="btn btn-primary btn-block btn-sm" onclick="cargarModalArea();">
+            <i class="fa fa-user-plus">&nbsp;&nbsp;Crear</i>
+        </a> 
+    </div>
+
+        <!-- GENERAR EXCEL -->
+    <div class="col-md-2">
+        <a href ="/excel_areapersonal" class="btn btn-success btn-block btn-sm" id="excel">
+            <i class="fa fa-file-excel-o">&nbsp;&nbsp; Generar Excel</i>
+        </a>
+        
+    </div>
+    
+        <!-- GENERAR PDF -->
+    <div class="col-md-2">
+        <a href="/pdf_areapersonal" class="btn btn-danger btn-block btn-sm" id="pdf">
+            <i class="fa fa-file-pdf-o">&nbsp;&nbsp; Generar Pdf</i>
+        </a>
+    </div>
+</div>
+<div style="windows:100px; overflow:auto;">  
+<div class="row">
+    <div class="col-md-10" style=" background-color:white; margin-left:15px;">
+        <table id="tableAreasdos" class="display nowrap"  style="width:100%" >
+            <thead >
+                <tr bgcolor="#bee5eb">
+                    <th class="text-center">#</th>
+                    <th class="text-center">ÁREA</th>
+                    <th class="text-center">DESCRIPCIÓN</th>
+                    <th class="text-center">ESTADO</th>                   
+                    <th class="text-center">ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- for "variable tamporal" in "como llama desde  mi views"-->                
+                {% for areapy in area %}
+                    <tr>
+                        <td>{{ forloop.counter }} </td>
+                        <td>{{ areapy.nombre }}</td>
+                        {% if areapy.descripcion %}
+                            <td>{{ areapy.descripcion }}</td> 
+                        {% else %}
+                            <td><span class="badge bg-yellow">Sin Descripción</span></td>
+                        {% endif %}
+                        {% if  areapy.estado == "1" %}
+                            <td width="10"> <span class="badge bg-green">Activo</span></td>
+                        {% else %}
+                            <td width="10"> <span class="badge bg-red">Inactivo</span></td>
+                        {% endif %}
+                        <td class="text-center" width="10">
+                            <a href="#" title="editar" onclick="selecAreapersonal('{{areapy.id}}');">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </a>&nbsp;&nbsp;
+                            <!--
+                            <a href="#" title="eliminar" onclick="eliminarAreapersonal('{{ areapy.id }}');">
+                                <i class="fa fa-window-close"></i>
+                            </a>
+                            -->
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table><br>
+    </div>
+</div>
+</div>
+    
+    
+    <!-- MODA CREAR USUARIO-->
+    
+    <div class="modal fade" id="modalAreados">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="fa fa-window-close"></i>
+            </button>
+                <h4 class="modal-title"><strong>Área</strong> </h4>
+        </div>
+        <div class="modal-body">
+            <form action="/ingresar_areapersonal" role="form" id="formArea" autocomplete="off" method="POST">
+            {% csrf_token %}
+            <div class="box-body">
+                <input type="hidden" id="accion">
+                {{ areaForm.id.as_hidden }}
+                    <div class="form-group">
+                        <label for="nombre" class="value_required">Área:</label>
+                        {{ areaForm.nombre }}
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion">Descripción:</label>
+                        {{ areaForm.descripcion }}
+                    </div>
+                    <div class="form-group">
+                        <label for="correo" class="value_required">Estado:</label>
+                        {{ areaForm.estado }}
+                    </div>
+    
+                <div class="row">
+                    <div class="col-md-4">
+                        <label style="color:red;">*Campos Obligatorios </label>
+                    </div>
+                </div>
+    
+            </div>
+            
+    
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-check-square-o ">&nbsp;Grabar Datos</i>
+            </button>
+            <!-- pull-left determina posicion-->
+            <button type="button" class="btn btn-danger " data-dismiss="modal">
+                <i class="fa fa-close">&nbsp; Salir</i> 
+            </button>
+    
+        </div>
+    </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+    </div>
+</div>
+
+
+

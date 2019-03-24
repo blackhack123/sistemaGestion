@@ -1,0 +1,131 @@
+
+    <div class="tab-pane fade" id="peso" role="tabpanel" aria-labelledby="peso-tab">
+
+        <div class="row"><br>
+            <div class="col-md-2">
+                <a href ="javascript:void(0);" class="btn btn-primary btn-block btn-sm" onclick="cargarModalPesoResponsable();" >
+                    <i class="fa fa-plus"> Crear</i>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href ="/excel_pesosResponsables" class="btn btn-success btn-block btn-sm" id="excel">
+                    <i class="fa fa-file-excel-o"> Reporte Excel</i>
+                </a>
+            </div>
+        </div>                    
+
+        <div class="row">
+            <div class="col-md-12">
+                <table id="gridPesosResponsables"></table>
+                <div id="pagerPesosResponsables" class="text-black"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- Modal Departamento -->
+    <div class="modal fade" id="modalPesoResponsable" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="" id="formPesoResponsable" method="post">
+                {% csrf_token %}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="titlePesoResponsable"></h4>
+          </div>
+          <div class="modal-body">
+              <input type="hidden" id="pesoResponsableId" name="pesoResponsableId">
+              <div class="form-group">
+                  <label for="responsable" class="value_required">Responsable:</label>
+                  <select name="responsable" id="responsable" class="form-control" required>
+                      <option value="">------------</option>
+                      {% for responsable in responsables_list %}
+                      <option value="{{ responsable.pk }}">{{ responsable.nombre }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="row">
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="departamento" class="value_required">Departamento:</label>
+                          <select name="departamento" id="departamento" class="form-control" required>
+                              <option value="">------------</option>
+                              {% for departamento in departamentos_list %}
+                              <option value="{{ departamento.pk }}">{{ departamento.nombre }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="descripcion">Estado</label>
+                          <select name="estado" id="estado" required class="form-control">
+                              <option value="1" selected>Activo</option>
+                              <option value="0">Inactivo</option>
+                          </select>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="pesoEmpresa" class="value_required">Peso Empresa</label>
+                          <input type="number" class="form-control" name="pesoEmpresa" id="pesoEmpresa" required>
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="pesoIndividual" class="value_required">Peso Individual</label>
+                          <input type="number" class="form-control" name="pesoIndividual" id="pesoIndividual" required>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="pesoTrabajoEquipo" class="value_required">Peso Equipo de Trabajo</label>
+                          <input type="number" class="form-control" name="pesoTrabajoEquipo" id="pesoTrabajoEquipo" required>
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="pesoOtros" class="value_required">Otros Pesos</label>
+                          <input type="number" class="form-control" name="pesoOtros" id="pesoOtros" required>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" onclick="grabarPeso(event);"><i class="fa fa-floppy-o"></i> Grabar Datos</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cerrar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal Observacion -->
+    <div class="modal fade" id="modalObservacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title badge bg-green" id="myModalLabel">Detalle</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="observacion" class="value_required">Descripción</label>
+                <textarea name="observacion" id="observacion" rows="5"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>

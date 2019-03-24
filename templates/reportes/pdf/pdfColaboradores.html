@@ -1,0 +1,69 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Colaboradores</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+    td,tr 
+{
+    height: 28px; 
+    width:auto;
+    text-align:center; 
+    /*vertical-align:middle; */
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 12px;
+    vertical-align:middle;
+}
+
+
+</style>
+<h1 style="text-align:center;  font-family:Times New Roman; font-weight: bold;">Reporte General de Colaboradores</h1>
+
+{% if colaboradores %}
+ <table border="1">
+     <thead>
+         <th width="10%" class="customTableHeader" bgcolor="lightskyblue">#</th>
+         <th width="70%" class="customTableHeader" bgcolor="lightskyblue">Colaborador</th>
+         <th width="70%" class="customTableHeader" bgcolor="lightskyblue">Correo</th>
+         <th width="40%" class="customTableHeader" bgcolor="lightskyblue">Telefono</th>
+         <th width="50%" class="customTableHeader" bgcolor="lightskyblue">Proceso</th>
+
+     </thead>
+     <tbody>
+      
+        {% for e in colaboradores %}
+            <tr>
+                <!-- MENSAJE PERSONALIZADO EN BASE AL Estado -->
+                {% if e.estado_colaborador == "1" %}
+
+                    <td>{{ e.id_colaborador }}</td>
+                    <td>{{ e.nombre_colaborador }}</td>
+                    <td>{{ e.correo }}</td>
+                    <td>{{ e.telefono }}</td>
+                    <td>{{ e.proceso }}</td>
+
+                {% elif e.estado_colaborador == "0" %}
+                    <td >{{ e.id_colaborador  }}</td>
+                    <td style="color:red;">{{ e.nombre_colaborador }}</td>
+                    <td style="color:red;">{{ e.correo }}</td>
+                    <td style="color:red;">{{ e.telefono }}</td>
+                    <td style="color:red;">{{ e.proceso }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+     </tbody>
+ </table>
+ {% else %}
+    <h4 style="text-align:center;">No existen Colaboradores !!</h4>
+ {% endif %}    
+
+</body>
+</html>

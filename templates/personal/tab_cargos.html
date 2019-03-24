@@ -1,0 +1,139 @@
+<div class="tab-pane fade" id="cargos" role="tabpanel" aria-labelledby="cargos-tab">
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:5px;margin-left:5px;">
+        <br>
+
+        <!-- CREAR USUARIO -->
+        <div class="col-md-2">
+            <a href="#" class="btn btn-primary btn-block btn-sm" onclick="cargarModalCargo();">
+                <i class="fa fa-user-plus">&nbsp;&nbsp;Crear</i>
+            </a> 
+        </div>
+
+            <!-- GENERAR EXCEL -->
+        <div class="col-md-2">
+            <a href ="/excelCargos" class="btn btn-success btn-block btn-sm" id="excel">
+                <i class="fa fa-file-excel-o">&nbsp;&nbsp; Generar Excel</i>
+            </a>
+            
+        </div>
+        
+            <!-- GENERAR PDF -->
+        <div class="col-md-2">
+            <a href="/pdfCargos" class="btn btn-danger btn-block btn-sm" id="pdf">
+                <i class="fa fa-file-pdf-o">&nbsp;&nbsp; Generar Pdf</i>
+            </a>
+        </div>
+    </div>
+<div style="windows:100px; overflow:auto;"> 
+    <div class="row">
+    <div class="col-md-10" style=" background-color:white; margin-left:15px;">
+        <table id="tableCargos" class="display nowrap" style="width:100%" >
+            <thead >
+                <tr bgcolor="#bee5eb">
+                    <th class="text-center">#</th>
+                    <th class="text-center">CARGO</th>
+                    <th class="text-center">DESCRIPCIÓN</th>
+                    <th class="text-center">ESTADO</th>
+                    <th class="text-center" style="display:none;">ESTADO</th>
+                    <th class="text-center">ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cargo in cargos %}
+                <tr>
+                    <td width="10">{{ forloop.counter }} </td>
+                    <td>{{ cargo.nombre }}</td>
+                    {% if cargo.descripcion %}
+                    <td>{{ cargo.descripcion }}</td> 
+                    {% else %}
+                        <td><span class="badge bg-yellow">Sin Descripción</span></td>
+                    {% endif %}
+                    <td style="display:none;" width="10">{{ cargo.estado }}</td>
+                    {% if  cargo.estado == "1" %}
+                        <td width="10"> <span class="badge bg-green">Activo</span></td>
+                    {% else %}
+                        <td width="10"> <span class="badge bg-red">Inactivo</span></td>
+                    {% endif %}
+                    <td class="text-center" width="10">
+                        <a class="btn btn-small" href="#" onclick="getCargo('{{ cargo.id }}');">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table><br>
+    </div>
+    </div>
+</div>
+
+
+    <!-- MODA CREAR USUARIO-->
+
+    <div class="modal fade" id="modalCargo">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="fa fa-window-close"></i>
+            </button>
+                <h4 class="modal-title"><strong>Cargo</strong> </h4>
+        </div>
+        <div class="modal-body">
+            <form  role="form" id="formPersonal" autocomplete="off" method="POST">
+            {% csrf_token %}
+            <div class="box-body">
+                <input type="hidden" id="accion">
+                {{ cargoForm.pk.as_hidden }}
+                    <div class="form-group">
+                        <label for="nombre" class="value_required">Cargo:</label>
+                        {{ cargoForm.nombre }}
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion">Descripción:</label>
+                        {{ cargoForm.descripcion }}
+                    </div>
+                    <div class="form-group">
+                        <label for="correo" class="value_required">Estado:</label>
+                        {{ cargoForm.estado }}
+                    </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <label style="color:red;">*Campos Obligatorios </label>
+                    </div>
+                </div>
+
+            </div>
+            
+
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+            </button>
+            <!-- pull-left determina posicion-->
+            <button type="button" class="btn btn-danger " data-dismiss="modal">
+                <i class="fa fa-close">&nbsp; Salir</i> 
+            </button>
+
+        </div>
+    </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+    </div>
+</div>
+
+<script>
+    {% if messages %}            
+        {% for messagess in messages %}                                
+            swal('{{message}}', '', '{{ message.tags }}'); 
+        {% endfor %}
+       
+        $('#myTab a[href="#areas"]').tab('show')
+        
+    {% endif %}
+</script>

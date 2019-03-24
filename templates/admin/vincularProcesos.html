@@ -1,0 +1,349 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" >
+    <!-- Content Header (Page header) -->
+    <section class="content-header" >
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                <li>
+                    <a href="javascript:void(0)"><i class="fa fa-briefcase"></i> Procesos</a>
+                </li>
+                <li class="active">
+                    Vincular Procedimientos
+                </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:1px;">
+
+        <!-- VINCULAR PROCESOS  -->
+        <div class="col-md-3">
+            <a href="javascript:void(0)" class="btn btn-primary btn-block btn-sm" onclick="cargarModalVincular();">
+                <i class="fa fa-check-square-o">&nbsp;&nbsp;Vincular Procedimientos</i>
+            </a> 
+        </div>
+        <!-- VINCULAR PROCESOS  -->
+        <div class="col-md-3" >
+            <a href="javascript:void(0)" class="btn btn-info btn-block btn-sm" onclick="cargarModalVincularColaboradores();" id="colaboradores">
+                <i class="fa fa-check-square-o">&nbsp;&nbsp;Vincular Colaboradores</i>
+            </a> 
+        </div>
+
+    </div>
+    <div class="row" style="margin-bottom:15px;">
+        <!-- GENERAR EXCEL -->
+        <div class="col-md-3">
+            <a href ="/excelVinculados" class="btn btn-success btn-block btn-sm" id="excel">
+                <i class="fa fa-file-excel-o">&nbsp;&nbsp; Generar Excel</i>
+            </a>
+        </div>
+        <!-- GENERAR PDF -->
+        <div class="col-md-3">
+            <a href="/pdfVinculados" class="btn btn-danger btn-block btn-sm" id="pdf">
+                <i class="fa fa-file-pdf-o">&nbsp;&nbsp; Generar Pdf</i>
+            </a>
+        </div>
+    </div>
+    <div class="row" >
+        <!-- INPUT BUSCAR -->
+        <div class="col-md-3">
+            <input id="search_cells" type="text" class="form-control input-sm" placeholder="Buscar.."/>
+        </div>
+        </div>
+
+        <!-- GRID PROCESOS VINCULADOS-->
+        <div class="row">
+            <div class="col-md-12">
+                <div style="widows: 100px; overflow:auto;">
+                <table id="gridVinculados"></table>
+                </div>
+                <div id="pagerVinculados" style="color:black"></div>
+            </div>
+        </div>
+
+        
+
+    <!-- MODA vincular procesos-area -->
+
+    <div class="modal fade " id="modalVincular">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title"><strong>Vincular Procedimientos</strong> </h4>
+            </div>
+            <div class="modal-body">
+                <form action="" role="form" id="formVincular" autocomplete="off">
+                <div class="box-body">
+                    <input type="hidden" id="idArea" value="">
+                    <input type="hidden" id="accion">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <div class="form-group">
+                                <label for="nombre" class="value_required">Seleccione un Proceso:</label>
+                                <select id="id_area" required class="form-control">
+                                  <option disabled selected> Seleccione:</option>
+                                    {% for area in areas %}
+                                    <option id="{{ area.id}}" value="{{area.id}}">{{area.area}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div> 
+
+                    <div class="form-group">
+                        <label for="descripcion" class="value_required">Seleccione el Procedimiento a vincular:</label>
+                        <!-- GRID PROCESOS-->
+			<div style="widows: 100px; overflow:auto;"> 
+                        <table id="gridProcesosArea"></table>
+			</div>
+                        <div id="pagerProcesosArea" style="color:black"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="color:red;">*Campos Obligatorios </label>
+                        </div>
+                    </div>
+                </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="confirmarGrabar();">
+                    <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                </button>
+                <!-- pull-left determina posicion-->
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i> 
+                </button>
+
+            </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+
+       <!-- MODA vincular colaboradores-->
+
+       <div class="modal fade " id="modalVincularColaboradores">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-window-close"></i>
+                    </button>
+                        <h4 class="modal-title"><span class="badge bg-green">Vincular Colaboradores</span> </h4>
+                </div>
+                <div class="modal-body">
+                    <form action="" role="form" id="formVincularColaboradores" autocomplete="off">
+                    <div class="box-body">
+                        <input type="hidden" id="idArea" value="">
+                        <input type="hidden" id="accion">
+                        <div class="form-group">
+                            <label for="nombre" class="value_required">Proceso:</label>
+                            <select id="id_area" required class="form-control" onchange="cargarProcesos($(this).val());">
+                               <option disabled selected> Seleccione:</option>
+                                {% for area in areas %}
+                                <option id="{{ area.id}}" value="{{area.id}}">{{area.area}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group" id="procesos">
+                            <label for="nombre" class="value_required">Procedimiento:</label>
+                            <select id="id_proceso" required class="form-control">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                        <label for="director" class="value_required">Director de Área:</label>
+                            <select name="director" id="director" class="form-control">
+                                <option selected disabled>Seleccione:</option>
+                                {% for director in director_list %}
+                                <option value="{{ director.id }}">{{ director.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="lider" class="value_required">Colaborador:</label>
+                                <select name="colaborador" id="colaborador" class="form-control">
+                                    <option selected disabled>Seleccione:</option>
+                                    {% for colaborador in colaborador_list %}
+                                        <option value="{{ colaborador.id }}">{{ colaborador.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="Lider" class="value_required">Líder de Norma</label>
+                                    <select name="lider_norma" id="lider_norma" class="form-control">
+                                        <option selected disabled>Seleccione:</option>
+                                        {% for lider in lider_norma_list %}
+                                        <option value="{{ lider.id }}">{{ lider.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label style="color:red;">*Campos Obligatorios </label>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="grabar_proceso" onclick="confirmarGrabarColaboradores();">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+    <div id="dialogVinculados" style="display:none">
+        <div class="form-group">
+            <label for="Procedimientos">Procedimientos Vinculados:</label>
+            <ul id="lista_procedimientos"></ul>
+        </div>
+    </div>
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!--JQUERY UI
+<link rel="stylesheet" href="{% static 'jquery_1_12_1/jquery-ui.css' %}">
+-->
+<script src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+<script src="{% static 'jquery-ui/ui.dialog.dialogResize.js' %}"></script>
+
+<!-- INDEX JS -->
+<script src="{% static 'module/vincularProcesos.js' %}"></script>
+</body>
+<!-- solucion para funcion del boton guardar  -->
+<script>
+/*
+    var element = document.getElementById('grabar_proceso');
+    element.addEventListener('click', confirmar);
+
+    function confirmar() {
+        swal({
+            title: "Desea grabar los Datos ??",
+            text: "",
+            icon: "warning",
+            buttons: ['No', 'Si'],
+            dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+                insertColaboradores();
+            } else {
+              return false;
+            }
+          });
+
+    }//end function
+    */
+    </script>
+</html>

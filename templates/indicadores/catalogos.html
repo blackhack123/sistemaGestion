@@ -1,0 +1,198 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                    <li>
+                    <a href="javascript:void(0)"><i class="fa fa-pie-chart"></i> Indicadores  </a>
+                    </li>
+                    <li class="active">
+                        Administrar Catálogos
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+            {% if messages %}
+                {% for message in messages %}
+                <script>swal("{{ message }}", "", "{{message.tags}}");</script>
+                {% endfor%}  
+            {% endif%}
+        
+          <!-- Inicio del contenido pagina-->
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="objetivos-tab" data-toggle="tab" href="#objetivos" role="tab" aria-controls="objetivos" aria-selected="true">Objetivos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="divisiones-tab" data-toggle="tab" href="#divisiones" role="tab" aria-controls="divisiones" aria-selected="false">Departamentos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="productos-tab" data-toggle="tab" href="#productos" role="tab" aria-controls="productos" aria-selected="false">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="responsables-tab" data-toggle="tab" href="#responsables" role="tab" aria-controls="responsables" aria-selected="false">Responsables</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="planes-tab" data-toggle="tab" href="#planes" role="tab" aria-controls="planes" aria-selected="false">Plan de Acción</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="variables-tab" data-toggle="tab" href="#variables" role="tab" aria-controls="variables" aria-selected="false">Variables</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="formulas-tab" data-toggle="tab" href="#formulas" role="tab" aria-controls="formulas" aria-selected="false">Formulas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="eje-tab" data-toggle="tab" href="#eje" role="tab" aria-controls="eje" aria-selected="false" title="Ejes Estratégicos">Ejes Estratégicos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="peso-tab" data-toggle="tab" href="#peso" role="tab" aria-controls="peso" aria-selected="false" title="Peso Responsables">Pesos Responsables</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent" style="background-color:white">
+                
+                <!--Tab OBJETIVOS -->
+                {% include "indicadores/tab_objetivos.html" %}
+            
+                <!-- Tab Divisiones-->
+                {% include "indicadores/tab_divisiones.html" %}
+
+                <!-- TAB productos-->
+                {% include "indicadores/tab_productos.html" %}
+            
+                <!-- TAB Responsables-->
+                {% include "indicadores/tab_responsables.html" %}
+
+                <!-- TAB Planes-->
+                {% include "indicadores/tab_planes.html" %}
+
+                <!-- TAB Variables -->
+                {% include "indicadores/tab_variables.html" %}
+
+                <!-- TAB FORMULAS-->
+                {% include "indicadores/tab_formulas.html" %}
+
+                <!-- TAB EJES-->
+                {% include "indicadores/tab_ejes.html" %}
+
+                <!-- TAB PESOS RESPONSABLES -->
+                {% include "indicadores/tab_pesos.html" %}
+
+            </div>
+
+
+    <!-- Fin del contenido pagina-->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- CHART-JS -->
+<script src="{% static 'ChartJs/Chart.min.js' %}"></script>
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<!-- INDEX JS -->
+<script src="{% static 'module/indicadores/catalogos.js' %}"></script>
+<script src="{% static 'module/indicadores/divisiones.js' %}"></script>
+<script src="{% static 'module/indicadores/productos.js' %}"></script>
+<script src="{% static 'module/indicadores/responsables.js' %}"></script>
+<script src="{% static 'module/indicadores/planes.js' %}"></script>
+<script src="{% static 'module/indicadores/variables.js' %}"></script>
+<script src="{% static 'module/indicadores/formulas.js' %}"></script>
+<script src="{% static 'module/indicadores/ejes.js' %}"></script>
+<script src="{% static 'module/indicadores/pesos.js' %}"></script>
+</body>
+</html>
+<style>
+    span.cellWithoutBackground
+{
+    display:block;
+    background-image:none;
+    margin-right:-2px;
+    margin-left:-2px;
+    height:23px;
+    padding:4px;
+}
+</style>

@@ -1,0 +1,236 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+            <ol class="breadcrumb">
+                <li>
+                <a href="javascript:void(0)"><i class="fa fa-industry"></i>&nbsp;&nbsp;Auditoria</a>
+                </li>
+                <li class="active">
+                    Administrar Auditores
+                </li>
+            </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:15px;">
+
+        <!-- INPUT BUSCAR -->
+        <div class="col-md-2">
+            <input id="search_cells" type="text" class="form-control input-sm" placeholder="Buscar.."/>
+        </div>
+
+            <!-- CREAR USUARIO -->
+            <div class="col-md-3">
+                <a href="#" class="btn btn-primary btn-block btn-sm" onclick="cargarModalAuditor();">
+                    <i class="fa fa-check">&nbsp;&nbsp;Establecer Auditor</i>
+                </a> 
+            </div>
+    
+                <!-- GENERAR EXCEL -->
+            <div class="col-md-2">
+                <a href ="/excelAuditores" class="btn btn-success btn-block btn-sm" id="excel">
+                    <i class="fa fa-file-excel-o">&nbsp;&nbsp; Generar Excel</i>
+                </a>
+                
+            </div>
+            
+                <!-- GENERAR PDF -->
+            <div class="col-md-2">
+                <a href="/pdfAuditores" class="btn btn-danger btn-block btn-sm" id="pdf">
+                    <i class="fa fa-file-pdf-o">&nbsp;&nbsp; Generar Pdf</i>
+                </a>
+            </div>
+    </div>
+        <!-- GRID USUARIOS-->
+      <table id="gridAuditores"></table>
+      <div id="pagerAuditores" style="color:black"></div>
+
+
+    <!-- MODA AREA-->
+    <div class="modal fade" id="modalAuditor">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title"><strong>Auditor</strong> </h4>
+            </div>
+            <div class="modal-body">
+                <form action="" role="form" id="formAuditor" autocomplete="off">
+                <div class="box-body">
+                    <input type="hidden" id="idAuditor">
+                    <input type="hidden" id="accion">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Cargo:</label>
+                                <select id="id_cargo" required class="form-control" onchange="gridColaboradores($(this).val());">
+                                    <option disabled selected> Seleccione:</option>
+                                    {% for cargo in cargos %}
+                                    <option id="{{ cargo.id}}" value="{{cargo.id}}">{{cargo.nombre}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="descripcion" class="value_required">Norma:</label>
+                                <select id="id_norma" class="form-control" onchange="gridProDesignados($(this).val());">
+                                    <option disabled selected>Seleccione una Norma:</option>
+                                    {% for norma in normas %}
+                                        <option id="{{norma.id}}" value="{{norma.id}}">{{norma.nombre}}</option>
+                                    {%  endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="descripcion" class="value_required">Seleccione los Auditores:</label>
+                                <!-- GRID PROCESOS-->
+                                <table id="gridColaboradores"></table>
+                                <div id="pagerColaboradores" style="color:black"></div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="descripcion" >Procesos Designados:</label>
+                                <!-- GRID PROCESOS-->
+                                <table id="gridProcesosDesignados"></table>
+                                <div id="pagerProcesosDesignados" style="color:black"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="color:red;">*Campos Obligatorios </label>
+                        </div>
+                    </div>
+                </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="confirmarGrabar();">
+                    <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                </button>
+                <!-- pull-left determina posicion-->
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i> 
+                </button>
+
+            </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <div id="dialogDetalleClausula" title="Detalle">
+        <div class="form-group">
+            <div id="detalle_clausula"></div>
+        </div>
+    </div>
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- JQUERY-UI-->
+<script src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+<script src="{% static 'jquery-ui/ui.dialog.dialogResize.js' %}"></script>
+
+<!-- INDEX JS -->
+<script src="{% static 'module/auditoria.js' %}"></script>
+
+</body>
+</html>

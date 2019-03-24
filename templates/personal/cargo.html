@@ -1,0 +1,147 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    {% include "head.html" %}
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                <li>
+                    <a href="javascript:void(0)"><i class="fa fa-child"></i> Personal</a>
+                </li>
+                <li class="active">
+                    Administrar Cargos
+                </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+     <!--Contenido de la Pagina -->
+
+         
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" id="cargos-tab" data-toggle="tab" href="#cargos" role="tab" aria-controls="cargos" aria-selected="true">Cargos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="areasdos-tab" data-toggle="tab" href="#areasdos" role="tab" aria-controls="areasdos" aria-selected="false">Areas</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent" style="background-color:white">
+            <!--TAP OBJETIVOS SE SEPARA PARA MEJORAR LA PROGRAMACION -->
+            {% include "personal/tab_cargos.html" %}
+        
+            <!--TAP OBJETIVOS SE SEPARA PARA MEJORAR LA PROGRAMACION -->
+            {% include "personal/tab_areas.html" %}
+        </div>
+        
+        
+ <!--FIN de la Pagina -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+-->
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/cargo.js' %}"></script>
+
+</body>
+<script>
+ 
+    {% if messages %}            
+        {% for message in messages %}                                
+            swal('{{message}}', '', '{{ message.tags }}'); 
+        {% endfor %}
+    {% endif %}
+
+    {% if insert_area %}
+        $('#myTab a[href="#areasdos"]').tab('show')
+    {% else %}
+        //variable de session para validar el tab
+        var ok_delete = sessionStorage.getItem("ok_delete");
+        if(ok_delete){
+            $('#myTab a[href="#areasdos"]').tab('show')
+            sessionStorage.removeItem("ok_delete");
+        }else{
+            $('#myTab a[href="#cargos"]').tab('show')
+        }
+    {% endif %}
+</script>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta charset="ISO-8859-1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Areas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+
+    td,tr 
+{
+    height: 28px; 
+    width:auto;
+    text-align:center; 
+    /*vertical-align:middle; */
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 12px;
+    vertical-align:middle;
+}
+
+
+</style>
+<h1 style="text-align:center;  font-family:Times New Roman; font-weight: bold;">Listado de Personal</h1>
+
+{% if personal_list %}
+ <table border="1">
+     <thead>
+         <th width="10%" class="customTableHeader" bgcolor="lightskyblue">#</th>
+         <th class="customTableHeader" bgcolor="lightskyblue" width="50%">Nombre</th>
+         <th class="customTableHeader" bgcolor="lightskyblue" width="35%">Área</th>
+         <th class="customTableHeader" bgcolor="lightskyblue" width="35%">Cargo</th>
+         <th class="customTableHeader" bgcolor="lightskyblue" width="30%">Proceso</th>
+         <th class="customTableHeader" bgcolor="lightskyblue" width="25%">Teléfono</th>
+         <th class="customTableHeader" bgcolor="lightskyblue" width="25%">Celular</th>
+         <th class="customTableHeader" bgcolor="lightskyblue">Correo</th>
+         
+     </thead>
+     <tbody>
+      
+        {% for e in personal_list %}
+            <tr>
+                <!-- MENSAJE PERSONALIZADO EN BASE AL Estado -->
+                {% if e.estado == "1" %}
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ e.nombre_persona }}</td>
+                    
+                    <!-- VALIDAR ÁREA -->
+                    {% if e.area %}
+                    <td>{{ e.area }}</td>
+                    {% else %}
+                        <td>--</td>
+                    {% endif %}
+                   
+                    <td>{{ e.cargo }}</td>
+
+                    <!-- VALIDAR PROCESO -->
+                    {% if e.proceso %}
+                        <td>{{ e.proceso }}</td>
+                    {% else %}
+                        <td>--</td>
+                    {% endif %}
+
+                    <!-- VALIDAR TELEFONO -->
+                    {% if e.telefono %}
+                        <td>{{ e.telefono }}</td>
+                    {% else %}
+                        <td>--</td>
+                    {% endif %}
+
+                    <!-- VALIDAR CELULAR -->
+                    {% if e.celular %}
+                        <td>{{ e.celular }}</td>
+                    {% else %}
+                        <td>--</td>
+                    {% endif %}
+                    
+                    <td>{{ e.correo }}</td>
+                   
+                {% elif e.estado == "0" %}
+                    <td >{{ forloop.counter }}</td>
+                    <td style="color:red;">{{ e.nombre_persona }}</td>
+                    <td style="color:red;">{{ e.area}}</td>
+                    <td style="color:red;">{{ e.cargo}}</td>
+                    <td style="color:red;">{{ e.telefono}}</td>
+                    <td style="color:red;">{{ e.correo}}</td>
+                    <td style="color:red;">{{ e.celular}}</td>
+                    
+                {% endif %}
+            </tr>
+        {% endfor %}
+     </tbody>
+ </table>
+ {% else %}
+    <h4 style="text-align:center;">No existe Personal !!</h4>
+ {% endif %}    
+
+</body>
+</html>

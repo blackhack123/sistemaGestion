@@ -1,0 +1,62 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Areas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style>
+
+    td,tr 
+{
+    height: 28px; 
+    width:auto;
+    text-align:center; 
+    /*vertical-align:middle; */
+}
+.customTableHeader{
+    font-family:Times New Roman;
+    font-weight: bold;
+    font-size: 12px;
+    vertical-align:middle;
+}
+
+
+</style>
+<h1 style="text-align:center;  font-family:Times New Roman; font-weight: bold;">Reporte General de Areas</h1>
+
+{% if areasdos %}
+ <table border="1">
+     <thead>
+         <th width="10%" class="customTableHeader" bgcolor="lightskyblue">#</th>
+         <th width="40%" class="customTableHeader" bgcolor="lightskyblue">Nombre</th>
+         <th width="70%" class="customTableHeader" bgcolor="lightskyblue">Descripción</th>
+         <th width="70%" class="customTableHeader" bgcolor="lightskyblue">Estado</th>
+     </thead>
+     <tbody>
+      
+        {% for e in areasdos %}
+            <tr>
+                {% if e.estado == '1' %}
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ e.nombre }}</td>
+                    <td>{{ e.descripcion }}</td> 
+                    <td>Activo</td>
+                {% else %} 
+                    <td>{{ forloop.counter }}</td>
+                    <td style="color:red;">{{ e.nombre }}</td>
+                    <td style="color:red;">{{ e.descripcion }}</td> 
+                    <td style="color:red;">Inactivo</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+     </tbody>
+ </table>
+ {% else %}
+    <h4 style="text-align:center;">No existe Areas !!</h4>
+ {% endif %}    
+
+</body>
+</html>

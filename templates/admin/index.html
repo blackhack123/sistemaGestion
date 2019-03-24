@@ -1,0 +1,551 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+{% include "head.html" %}
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        {% include "menu.html" %}
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                <li>
+                    <a href="javascript:void(0)"><i class="fa fa-users"></i> Usuarios</a>
+                </li>
+                <li class="active">
+                    Administrar Usuarios
+                </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+        <div class="row">
+ 
+
+            <!-- ASIGNAR PERMISOS 
+            <div class="col-md-2">
+                    <a href="#" class="btn btn-info btn-block btn-sm" onclick="cargarModalPermisos();">
+                        <i class="fa fa-check">&nbsp;&nbsp;Asignar Permisos</i>
+                    </a> 
+            </div>
+            -->
+        </div>
+
+    
+    <div class="row" style="margin-top:-15px;">
+        
+        <!-- INPUT BUSCAR -->
+        <div class="col-xs-2">
+            <input id="search_cells" type="text" class="form-control input-sm" placeholder="Buscar Usuario"/>
+        </div>
+        <!-- CREAR USUARIO
+        <div class="col-xs-2">
+            <a href="#" class="btn btn-primary btn-block btn-sm" onclick="cargarModalUsuario();">
+                <i class="fa fa-user-plus">&nbsp;&nbsp;Crear</i>
+            </a> 
+        </div>
+        -->
+        <!-- CREAR USUARIO -->
+        <div class="col-xs-2">
+            <a href="javascript:void(0)" class="btn btn-primary btn-block btn-sm" onclick="cargarModalUsuarioMultiple();">
+                <i class="fa fa-user-plus">&nbsp;&nbsp;Crear</i>
+            </a>
+        </div>
+        <!-- Crear Usuario lectura
+        <div class="col-xs-2">
+            <a href="#" class="btn btn-warning btn-block btn-sm" onclick="cargarModalUsuarioLectura();">
+                <i class="fa fa-book">&nbsp;&nbsp;Usuario Lectura</i>
+            </a>
+        </div>
+        -->
+        <!-- GENERAR EXCEL -->
+        <div class="col-xs-2">
+            <a href ="/excelUsuarios" class="btn btn-success btn-block btn-sm">
+                <i class="fa fa-file-excel-o">&nbsp;&nbsp; Generar Excel</i>
+            </a>   
+        </div>
+            
+            <!-- GENERAR PDF -->
+        <div class="col-xs-2">
+            <a href="/pdfUsuarios" class="btn btn-danger btn-block btn-sm">
+                <i class="fa fa-file-pdf-o">&nbsp;&nbsp; Generar Pdf</i>
+            </a>
+        </div>
+    </div>
+        <!-- GRID USUARIOS-->
+        <div style="widows: 100px; overflow:auto;">
+      <table id="gridUsuarios"></table>
+        </div>
+      <div id="pagerUsuarios" style="color:black"></div>
+
+    <!-- MODA CREAR USUARIO
+    <div class="modal fade" id="modalUsuario">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title"><strong>Usuario</strong> </h4>
+            </div>
+            <div class="modal-body">
+                <form action="" role="form" id="formUsuario" autocomplete="off">
+                <div class="box-body">
+                    <input type="hidden" id="idUsuario">
+                    <input type="hidden" id="accion">             
+                    <div class="form-group">
+                        <label for="usuario" class="value_required">Nombre:</label><br>
+
+                        <input list="list_personal" name="id_pesrsonal" id="id_personal" CLASS="form-control">
+                        <datalist id="list_personal">
+                            {% for persona in personal %}
+                            <option  value="{{persona.nombre}}">{{persona.nombre}}--{{ persona.cargo }}</option>
+                             {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="usuario" class="value_required">Usuario:</label>
+                        <input type="text" class="form-control" id="usuario" placeholder="usuario">
+                    </div>
+                    <div class="form-group">
+                        <label for="clave" class="value_required">Clave:</label>
+                        <input type="password" class="form-control" id="clave" placeholder="*****" maxlength="15">
+                    </div>
+        
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Estado" class="value_required">Estado:</label>
+                                <select  id="estadoUsuario" class="form-control">
+                                <option   disabled selected>Seleccione</option>
+                                <option id="activo" value="1">Activo</option>
+                                <option id="inactivo" value="0">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nivel" class="value_required">Nivel:</label>
+                                <select  id="id_tipo_usuario" class="form-control" >
+                                    <option selected disabled>Seleccione:</option>
+                                    {% for nivel in niveles %}
+                                        <option  id="{{nivel.id}}" value="{{nivel.id}}">{{nivel.tipo}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="color:red;">*Campos Obligatorios </label>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="confirmarGrabar();">
+                    <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                </button>
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i> 
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+    -->
+
+
+<!-- Modal
+<div class="modal fade" id="permisoUsuario" tabindex="-1" role="dialog" aria-labelledby="permisoUsuario" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-window-close"></i>
+                </button>
+                <h4 class="modal-title"><strong>Asignar Permisos</strong> </h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" autocomplete="off" id="formPermisoUsuario">
+                    <input type="hidden" id="accion" >
+                    <div class="form-group">
+                        <label for="Personal" class="value_required">Usuario:</label>
+                        <select name="id_usuario" id="id_usuario" class="form-control" onchange="getPermisos($(this).val());">
+                            <option selected disabled> Seleccione:</option>
+                            {% for usuario in usuarios %}
+                                <option value="{{usuario.id}}">{{usuario.usuario}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead class="bg-success">
+                            <tr>
+                                <th>Modulo</th>
+                                <th>Estado</th>
+                                <th>Modulo</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><label for="Personal">Personal</label></td>
+                                <td ><input type="checkbox" id="personal" data-toggle="toggle" data-width="110" ></td>
+                                <td><label for="Usuarios">Usuarios</label></td>
+                                <td ><input type="checkbox" id="usuario"  data-width="110"></td>
+                            </tr>
+                            <tr>
+
+                            </tr>
+                            <tr>
+                                <td><label for="Area" >Areas</label></td>
+                                <td ><input type="checkbox" id="area"  data-width="110"></td>
+                                <td><label for="Normas" >Normas</label></td>
+                                <td ><input type="checkbox" id="norma"  data-width="110"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="Area" >Auditoria</label></td>
+                                <td ><input type="checkbox" id="auditoria" data-width="110"></td>
+                                <td><label for="Gestion Documental" >Gestion Documental</label></td>
+                                <td><input type="checkbox" id="documental" data-width="110"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="Area" >SAC</label></td>
+                                <td><input type="checkbox" id="sac" data-width="110"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="confirmarGrabarPermisos();">
+                    <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                </button>
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i> 
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
+    <!-- MODA CREAR USUARIO LECTURA
+    <div class="modal fade" id="modalUsuarioLectura">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title"><span class="badge bg-green"> Usuario Lectura</span></h4>
+            </div>
+            <div class="modal-body">
+                <form action="" role="form" id="formUsuarioLectura" autocomplete="off">
+                <div class="box-body">
+                    <input type="hidden" id="idUsuario">
+                    <input type="hidden" id="accion">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="usuario" class="value_required">Nombre:</label><br>
+                                <input list="list_personal" name="id_pesrsonal" id="id_personal" CLASS="form-control">
+                                <datalist id="list_personal">
+                                    {% for persona in personal %}
+                                    <option  value="{{persona.nombre}}">{{persona.nombre}}--{{ persona.cargo }}</option>
+                                     {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="usuario" class="value_required">Usuario:</label>
+                                <input type="text" class="form-control" id="usuario" placeholder="usuario">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clave" class="value_required">Clave:</label>
+                                <input type="password" class="form-control" id="clave" placeholder="*****" maxlength="15">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                             <div class="form-group">
+                                <label for="Estado" class="value_required">Estado:</label>
+                                <select  id="estadoUsuarioLectura" class="form-control">
+                                <option disabled selected>Seleccione</option>
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Documentos" class="value_required">Documentos</label>
+                          <table id="gridDocumentos"></table>
+                          <div id="pagerDocumentos" style="color:black"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="color:red;">*Campos Obligatorios </label>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="confirmarGrabar();">
+                    <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                </button>
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i>
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <!-- MODA CREAR USUARIO multiple -->
+    <div class="modal fade" id="modalUsuarioMultiple">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="fa fa-window-close"></i>
+                </button>
+                    <h4 class="modal-title"><span class="badge bg-green"> Usuario</span></h4>
+            </div>
+            <div class="modal-body">
+                <form action="" role="form" id="formUsuarioMultiple" autocomplete="off">
+                <div class="box-body">
+                    <input type="hidden" id="idUsuario">
+                    <input type="hidden" id="accion">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="usuario" class="value_required">Nombre:</label><br>
+                                <!-- Campo de texto combinado con lista de opciones -->
+                                <input list="list_personal" name="id_pesrsonal" id="id_personal" CLASS="form-control input-sm">
+                                <datalist id="list_personal">
+                                    {% for persona in personal %}
+                                    <option  value="{{persona.nombre}}">{{persona.nombre}}--{{ persona.cargo }}</option>
+                                     {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="usuario" class="value_required">Usuario:</label>
+                                <input type="text" class="form-control input-sm" id="usuario" placeholder="usuario">
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="clave" class="value_required">Clave:</label>
+                                <input type="password" class="form-control input-sm" id="clave" placeholder="*****" maxlength="15">
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                             <div class="form-group">
+                                <label for="Estado" class="value_required">Estado:</label>
+                                <select  id="estadoUsuarioMultiple" class="form-control input-sm">
+                                    <option disabled selected>Seleccione</option>
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="Nivel" class="value_required">Tipo de Usuario:</label>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Nivel" class="value_required">Permisos:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-bordered">
+                                <tbody>
+                                     <tr class="success">
+                                         <td class="text-center">Director de Área</td>
+                                         <td class="text-center">Colaborador</td>
+                                         <td class="text-center">Líder de Norma</td>
+                                     </tr>
+                                     <tr>
+                                        <td class="text-center">
+                                            <input data-toggle="toggle" type="checkbox" data-size="small" id="director" class="toogle_reset">
+                                        </td>
+                                         <td class="text-center">
+                                            <input data-toggle="toggle" type="checkbox" data-size="small" id="colaborador" class="toogle_reset">
+                                        </td>
+                                        <td class="text-center">
+                                            <input data-toggle="toggle" type="checkbox" data-size="small" id="lider_norma" class="toogle_reset">
+                                        </td>
+                                     </tr>
+                                     <tr class="success">
+                                         <td class="text-center">Auditor</td>
+                                         <td class="text-center">Auditor Líder</td>
+                                     </tr>
+                                     <tr>
+                                        <td class="text-center">
+                                            <input data-toggle="toggle" type="checkbox" data-size="small" id="auditor" class="toogle_reset">
+                                        </td>
+                                         <td class="text-center">
+                                            <input data-toggle="toggle" type="checkbox" data-size="small" id="auditor_lider" class="toogle_reset">
+                                        </td>
+                                     </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="col-sm-6">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr class="success">
+                                            <td class="text-center">Solo Lectura</td>
+                                            <td class="text-center">Escritura</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center">
+                                                <input data-toggle="toggle" type="checkbox" data-size="small" id="permiso_lectura" class="toogle_reset">
+                                            </td>
+                                            <td class="text-center">
+                                                <input data-toggle="toggle" type="checkbox" data-size="small" id="permiso_escritura" class="toogle_reset">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label style="color:red;">*Campos Obligatorios </label>
+                    </div>
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="grabarUsuario();">
+                    <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                </button>
+                <!-- pull-left determina posicion-->
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i>
+                </button>
+            </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+
+
+   <!-- MODAL para las  observaciones -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalDetalle">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title"><span class="badge bg-green">Detalle</span></h5>
+                </div>
+                <div class="modal-body">
+                    <form id="form_detalle">
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Detalle:</label>
+                            <textarea id="descripcion" class="form-control" placeholder="Detalle" maxlength="100" readonly></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+<!-- BOOTSTRAP TOGGLE -->
+<link rel="stylesheet" href="{% static 'BootstrapToggle/css/bootstrap-toggle.min.css' %}">
+<script src="{% static 'BootstrapToggle/js/bootstrap-toggle.min.js' %}"></script>
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/index.js' %}"></script>
+</body>
+</html>

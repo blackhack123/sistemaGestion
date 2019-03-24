@@ -1,0 +1,628 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header">
+
+    <!-- Logo -->
+    <span href="" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b><i class="fa fa-cogs"></i> </b></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><img src="{% static 'images/logos/gear6.jpg' %}" width="65" height="41" style="border: 3px solid #ddd; border-radius: 4px;"><b> &nbsp;<b>Menú</span>
+    </span>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Menú de Navegacion</span>
+      </a>
+        <div class="navbar-custom-menu " style="margin-right:40px">
+            <ul class="nav navbar-nav ">
+                <li class="dropdown notifications-menu">
+                     <a href="http://www.rgmanagementcorp.com"  target="_blank">
+                        <img src="{% static 'images/rg/help2.png' %}"  width="60" height="30" style="background-color:white;border: 3px solid #ddd; border-radius: 4px;" >
+                        <span class="label label-danger"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- NOTIFICACIONES UNIFICADAS -->
+        <div class="navbar-custom-menu pull-left" style="margin-left:80px">
+            <ul class="nav navbar-nav">
+                <li class="dropdown notifications-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-bell-o"></i>
+                  <span class="label label-danger"><i class="fa fa-info text-white"></i></span>
+                </a>
+                    <ul class="dropdown-menu">
+                    {% include "user/notificaciones.html" %}
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>{{ request.session.nombreUsuario }}</p>
+          <!-- Status -->
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        </div>
+      </div>
+
+        <!-- MENU UNIFICADO -->
+        {% include 'user/menu.html' %}
+
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+                <ol class="breadcrumb">
+                    <li>
+                      <a href="javascript:void(0)"><i class="fa fa-briefcase"></i> Seguimientos</a>
+                    </li>
+                    <li class="active">
+                     Administrar Seguimientos
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">      
+      <table class="table table-bordered table-hover table-striped display nowrap" id="tableSeguimiento" style="width:100%">
+          <thead>
+          <tr bgcolor="#bee5eb">
+              <th colspan="6" class="text-center"><span class="badge bg-blue">RESPONSABLE PLAN DE ACCION</span> </th>
+              <th colspan="5" class="text-center"><span class="badge bg-blue">RESPONSABLE SEGUIMIENTO</span></th>
+              <th colspan="1"></th>
+          </tr>
+          <tr  bgcolor="#bee5eb">
+              <th scope="col">#</th>
+              <th scope="col" class="text-center">Plan de Acción</th>
+              <th scope="col" class="text-center">Plazo</th>
+              <th scope="col" class="text-center">Justificación</th>
+              <th scope="col" class="text-center">Observación</th>
+              <th scope="col" class="text-center">Estado</th>
+              <th scope="col" class="text-center">Fecha</th>
+              <th scope="col" class="text-center">Persona Designada</th>
+              <th scope="col" class="text-center">Justificacion</th>
+              <th scope="col" class="text-center">Observación</th>
+              <th scope="col" class="text-center">Estado</th>
+              <th scope="col" class="text-center">Accion</th>
+
+          </tr>
+          </thead>
+          <tbody>
+              {% for plan in planAccion%}
+              <tr>
+                  <td>{{forloop.counter}}</td>
+                  <!-- DETALLE PLAN ACCION -->
+                  <td>
+                    <a href='javascript:void(0)' onclick='javascript:modalCol("{{plan.detalle_plan_accion}}");'><i class="fa fa-envelope"> Abrir</i></a>
+                  </td>
+                  <!-- PLAZO PLAN ACCION -->
+                  <td>{{plan.plazo_plan_accion}}</td>
+                  <!-- JUSTIFICACION PLAN ACCION -->
+                  {% if plan.justificacion_plan %}
+                    <td>
+                        <a href="javascript:void(0)" data-whatever="{{ plan.justificacion_plan }}" data-toggle="modal" data-target="#modalCol" >
+                            <i class="fa fa-envelope"> Abrir</i>
+                        </a>
+                    </td>
+                  {% else %}
+                    <td><i class="fa fa-clock-o" style="color:orange"> Pendiente</i></td>
+                  {% endif %}
+
+                  <!-- OBSERVACION PLAN -->
+                  {% if plan.observacion_plan %}
+                    <td>
+                        <a href="javascript:void(0)" onclick="javascript:modalCol('{{plan.observacion_plan}}');"><i class="fa fa-envelope"> Abrir</i></a>
+                    </td>
+                  {% else %}
+                        <td></td>
+                  {% endif %}
+                    <!-- ESTADO PLAN -->
+                  {% if plan.estado_plan == "0" %}
+                    <td> <i class="fa fa-clock-o" style="color:orange"> Pendiente</i></td>
+                  {% elif plan.estado_plan == "1" %}
+                    <td> <i class="fa fa-check" style="color:green"> Aprobado</i></td>
+                  {% elif plan.estado_plan == "2" %}
+                    <td> <i class="fa fa-commenting-o" style="color:red"> Observaciones</i></td>
+                  {% endif %}
+
+                  <!-- FECHA SEGUIMIENTO -->
+                  {% if plan.fecha_seguimiento %}
+                    <td>{{plan.fecha_seguimiento}}</td>
+                  {% else %}
+                    <td></td>
+                  {% endif %}
+
+                  <!--PERSONAL SEGUIMIENTO -->
+                  {% if plan.personal_seguimiento %}
+                      <td>{{ plan.personal_seguimiento }}</td>
+                  {%else%}
+                      <td></td>
+                  {% endif %}
+
+                  <!-- DETALLE SEGUIMIENTO -->
+                  {% if plan.detalle_seguimiento %}
+                    <td>
+                       <a href="javascript:void(0)" data-whatever="{{ plan.detalle_seguimiento }}" data-toggle="modal" data-target="#modalCol" >
+                            <i class="fa fa-envelope"> Abrir</i>
+                        </a>
+                    </td>
+                  {% else %}
+                    <td></td>
+                  {% endif %}
+
+                  <!--OBSERBACION SEGUIMIENTO -->
+                  {% if plan.observacion_seguimiento %}
+                    <td>
+                        <a href="javascript:void(0)" onclick="javascript:modalCol('{{plan.observacion_seguimiento}}');"><i class="fa fa-envelope"> Abrir</i></a>
+                    </td>
+                  {% else %}
+                    <td></td>
+                  {% endif %}
+                  
+                  <!-- ESTADO SEGUIMIENTO -->
+                  {% if plan.estado_seguimiento == "1" %}
+                      <td><i class="fa fa-check" style="color:green">Seguimiento Designado</i></td>
+                  {% elif  plan.estado_seguimiento == "2" %}
+                      <td><i class="fa fa-clock-o" style="color:orange"> Pendiente</i></td>
+                  {% elif  plan.estado_seguimiento == "3" %}
+                      <td><i class="fa fa-check" style="color:green">Aprobado </i></td>
+                  {% elif  plan.estado_seguimiento == "4" %}
+                    <td><i class="fa fa-commenting-o" style="color:red">Observaciones</i></td>
+                  {% elif plan.estado_seguimiento == "0" %}
+                      <td><i class="fa fa-clock-o" style="color:orange"> Pendiente</i></td>
+                  {% endif %}
+
+                  <!-- DETERMINAR ACCION -->
+                  <td>
+                    {% if request.session.idUsuario == plan.responsable_plan_accion_id %}
+                        {% if plan.estado_plan == "0" or plan.estado_plan == "2" %}
+                            <!-- RESPONDER PLAN ACCION -->
+                            <a href="javascript:void(0)" onclick="javascript:modalPlanAccion('{{ plan.id }}'+','+'{{plan.detalle_plan_accion}}');"><i class="fa fa-pencil" style="color:orange"> Editar</i></a>
+                        {% endif %}
+                    {% endif %}
+                    {% if request.session.idUsuario == plan.responsable_seguimiento_id %}
+                      {% if plan.estado_seguimiento == "1" or plan.estado_seguimiento == "4" %}
+                        <!-- RESPONDER SEGUIMIENTO -->
+                        <a href="javascript:void(0)" onclick="javascript:modalSeguimiento('{{ plan.id }}'+','+'{{plan.detalle_plan_accion}}');"><i class="fa fa-pencil" style="color:orange"> Editar </i></a>
+                      {% endif %}
+                    {% endif %}
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+       
+
+  
+
+
+<!-- MODAL SEGUIMIENTO DESIGNADO -->
+<div class="modal fade" id="seguimientoColaborador" tabindex="-1" role="dialog"  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Seguimiento Designado</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" id="id_sac">
+              <label for="Detalle  Plan Accion">Plan de Acción:</label>
+              <textarea id="detalle_plan_accion" class="form-control" readonly></textarea>
+          </div>
+          <div class="form-group">
+              <label for="Detalle  Plan Accion">Detalle seguimiento realizado:</label>
+              <textarea id="seguimiento_realizado" class="form-control"></textarea>
+          </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="grabarSeguimiento($('#id_sac').val());">Grabar Datos</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"> Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+     
+<!-- MODAL PENDIENTE/CAMBIOS SUGERIDOS-->
+<div class="modal fade" id="modalPlanAccion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title"><span class="badge bg-green"> PLAN DE ACCCIÓN DESIGNADO</span> </h5>
+      </div>
+      <div class="modal-body">
+        <form action="#" id="form_plan_accion">
+          <input type="hidden" id="id_plan_accion">
+          <div class="form-group">
+              <label for="Plan de Accion">Acción designada:</label>
+              <textarea id="detalle_plan_accion" readonly class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="Justificacion" class="value_required">Justificación</label>
+            <textarea id="accion_realizada" class="form-control"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="javascript:grabarJustificacionPlan();"><i class="fa fa-check-square-o"></i> Grabar Datos</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--MODAL SEGUIMIENTO DESIGNADO -->
+<div class="modal fade" id="modalSeguimiento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title"><span class="badge bg-green">SEGUIMIENTO DESIGNADO</span></h5>
+      </div>
+      <div class="modal-body">
+        <form action="#" id="form_seguimientoDesignado">
+          <div class="form-group">
+            <input type="hidden" id="id_plan">
+            <label for="plan">Plan de Accion</label>
+            <textarea name="plan_accion" id="plan_accion" class="form-control" readonly></textarea>
+          </div>
+          <div class="form-group">
+            <label for="Justificacion" class="value_required">Justificación</label>
+            <textarea name="justificacion_seguimiento" id="justificacion_seguimiento" class="form-control"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="javascript:grabarJustificacionSeguimiento();"><i class="fa fa-check-square-o"></i> Grabar Datos</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="modal fade" tabindex="-1" role="dialog" id="modalCol">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title badge bg-success"><span class="badge">Detalle</span></h5>
+        </div>
+        <div class="modal-body">
+            <form id="form_hallazgo">
+                <div class="form-group">
+                    <label for="Estado" class="value_required">Detalle:</label>
+                    <textarea id="descripcion" class="form-control" placeholder="Detalle" maxlength="100" rows="6" readonly></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- CKEDITOR JS -->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/colaborador.js' %}"></script>
+</body>
+<script>
+
+  function modalCol(data){
+    $("#descripcion").html(data.replace(/(<([^>]+)>)/ig,""));
+    $("#modalCol").modal('show');
+
+  }//end funtion
+
+  function modalPlanAccion(data){
+
+    //get data
+    var newData = new Array();
+    newData = data.split(',');
+    //reiniciar form
+    document.getElementById('form_plan_accion').reset();
+    id_plan_accion      = newData[0];
+    detalle_plan_accion = newData[1];
+    $("#modalPlanAccion #id_plan_accion").val(id_plan_accion);
+    $("#modalPlanAccion #detalle_plan_accion").val(detalle_plan_accion);
+    $("#modalPlanAccion").modal('show');
+
+  }//end function modalPlanAccion
+
+
+  function grabarJustificacionPlan(){
+
+    var id_plan_accion   =  $("#modalPlanAccion #id_plan_accion").val();
+    var justificacion = CKEDITOR.instances.accion_realizada.getData();
+    if(justificacion.length < 1){
+      swal("Ingrese el detalle de la actividad realizada !!", "", "warning");
+      return false;
+    }
+    swal({
+      title: "Desea grabar los datos ?",
+      text: "",
+      icon: "warning",
+      buttons: ['No', 'Si'],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        
+        //token
+        var csrftoken   = getCookie('csrftoken');
+
+        $.ajax({
+          type: "POST",
+          url: "/setJustificacionPlan",
+          data:{
+              csrfmiddlewaretoken : csrftoken, 
+              id_plan_accion:id_plan_accion,
+              justificacion:justificacion
+          },
+          dataType: "json",
+          success: function(data) {
+            
+            if(data.resultado =="ok_update"){
+              
+              //mensaje exitoso
+              swal(data.mensaje, "", "success");
+              //ocultar modal
+              $("#modalPlanAccion").modal('hide');
+              //reiniciar
+              location.reload();
+            }
+
+          },
+          error: function( jqXHR, textStatus, errorThrown ) {
+
+              if (jqXHR.status === 0) {
+
+                  swal('Not connect: Verify Network.', "", "error");
+
+              } else if (jqXHR.status == 404) {
+
+                  swal('Requested page not found [404]', "", "error");
+
+              } else if (jqXHR.status == 500) {
+
+                  swal('Internal Server Error [500]', "", "error");
+
+              } else if (textStatus === 'parsererror') {
+
+                  swal('Requested JSON parse failed.', "", "error");
+      
+              } else if (textStatus === 'timeout') {
+
+                  swal('Time out error', "", "error");
+      
+              } else if (textStatus === 'abort') {
+                  swal('Ajax request aborted.', "", "error");
+      
+              } else {
+                  swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+      
+              }//end if 
+          }//end error
+        }); 
+
+      } else {
+        return false;
+      }
+    });
+
+
+  }//end function grabarJustificacionPlan
+
+
+
+  function modalSeguimiento(parametros){
+    
+    data = parametros.split(',');
+    
+    document.getElementById('form_seguimientoDesignado').reset();
+    $("#modalSeguimiento #id_plan").val(data[0]);
+    $("#modalSeguimiento #plan_accion").val(data[1]);
+
+    //mostrar modal
+    $("#modalSeguimiento").modal('show');
+
+  }//end function modalSeguimiento
+
+
+  function grabarJustificacionSeguimiento(){
+
+    var id_plan                   = $("#modalSeguimiento #id_plan").val();
+    var justificacion_seguimiento = CKEDITOR.instances.justificacion_seguimiento.getData();;
+    if( justificacion_seguimiento < 1 ){
+      swal('Ingrese detalle del seguimiento realizado', '', 'warning');
+      return false;
+    }
+    swal({
+      title: "Desea grabar los datos ?",
+      text: "",
+      icon: "warning",
+      buttons: ['No', 'Si'],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+
+        //token
+        var csrftoken   = getCookie('csrftoken');
+
+        $.ajax({
+          type: "POST",
+          url: "/setJustiSeguimiento",
+          data:{
+              csrfmiddlewaretoken : csrftoken, 
+              id_plan:id_plan,
+              justificacion_seguimiento:justificacion_seguimiento
+          },
+          dataType: "json",
+          success: function(data) {
+            
+            if(data.resultado =="ok_update"){
+              
+              //mensaje exitoso
+              swal(data.mensaje, "", "success");
+              //ocultar modal
+              $("#modalSeguimiento").modal('hide');
+              //reiniciar
+              location.reload();
+            }
+
+          },
+          error: function( jqXHR, textStatus, errorThrown ) {
+
+              if (jqXHR.status === 0) {
+
+                  swal('Not connect: Verify Network.', "", "error");
+
+              } else if (jqXHR.status == 404) {
+
+                  swal('Requested page not found [404]', "", "error");
+
+              } else if (jqXHR.status == 500) {
+
+                  swal('Internal Server Error [500]', "", "error");
+
+              } else if (textStatus === 'parsererror') {
+
+                  swal('Requested JSON parse failed.', "", "error");
+      
+              } else if (textStatus === 'timeout') {
+
+                  swal('Time out error', "", "error");
+      
+              } else if (textStatus === 'abort') {
+                  swal('Ajax request aborted.', "", "error");
+      
+              } else {
+                  swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+      
+              }//end if 
+          }//end error
+          
+        });//end ajax
+
+      }else{
+        return false;
+      }
+    });
+  }//end function grabarJustificacionSeguimiento
+
+</script>
+</html>

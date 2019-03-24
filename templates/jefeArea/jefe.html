@@ -1,0 +1,478 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+{% include "jefeArea/encabezadoJefe.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>{{ request.session.nombreUsuario }}</p>
+                <!-- Status -->
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- MENU UNIFICADO -->
+        {% include 'user/menu.html' %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="javascript:void(0)"><i class="fa fa-clone"></i> SAC</a>
+                    </li>
+                    <li class="active">
+                        Administrar SAC
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="content container-fluid">
+    <!--Contenido de la Pagina -->
+        <div class="row" style="margin-bottom:15px; margin-top:-15px;">
+            <div class="col-md-2">
+                <a href="javascript:void(0)" class="btn btn-danger btn-block btn-xs" onclick="cargarModalSac();" id="pdf">
+                    <i class="fa fa-file-pdf-o">&nbsp;&nbsp;Generar SAC</i>
+                </a> 
+            </div>
+        </div>
+    <div style="widows: 100px; overflow:auto;"><table id="gridSacJefe" ></table></div>
+    <div id="pagerSacJefe" class="text-black"></div>
+   
+
+
+    <!-- MODAL ANALISIS / CORRECION -->
+    <div class="modal fade" id="modalAnalisisCorreccion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-window-close"></i></button>
+                    <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green" id="span_sac"></span></h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="idSac">
+                    <input type="hidden" id="accion">
+                    <!-- DESCRIPCION DE LA CORRECION -->
+                    <div class="box box-info collapsed-box">
+                        <div class="box-header">
+                            <h3 class="box-title">DESCRIPCIÓN DE LA CORRECCIÓN INMEDIATA TOMADA: (EN CASO DE CORRESPONDER)</h3>
+                            <div class="pull-right box-tools">
+                                <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="form-group" >
+                                <textarea name="descripcion_correcion" id="descripcion_correcion">     
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ANALISIS DE CAUSA  -->
+                    <div class="box box-info collapsed-box">
+                        <div class="box-header">
+                            <h3 class="box-title">ANÁLISIS DE CAUSA</h3>
+                            <div class="pull-right box-tools">
+                                <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="form-group" >
+                                <textarea name="analisis_causa" id="analisis_causa">     
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="confirmarGrabar();">
+                            <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- MODA PLAN DE ACCION -->
+    <div class="modal fade modal-default" id="modalPlanAccion">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-window-close"></i></button>
+                    <h4 class="modal-title"><span class="badge bg-green" id="span_plan_accion"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <form action="" role="form" id="formSac" autocomplete="off">
+                    <input type="hidden" id="idSac">
+                    <input type="hidden" id="accion">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="planAccion" class="value_required">Plan de Acción</label>
+                                <textarea name="planAccion" id="planAccion" rows="4" class="form-control" placeholder="Plan de Acción(obligatorio)"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="checkbox">
+                                        <label for="recursoHumano">
+                                        <input type="checkbox" id="recursoHumano" name="recursoHumano">Recurso Humano
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-7" style="display:none;" id="div_humano">
+                                    <div class="form-group">
+                                        <input type="text" name="detalleRecursoHumano" id="detalleRecursoHumano" class="form-control" placeholder="recurso humano(obligatorio)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="checkbox">
+                                        <label for="recursoTecnico">
+                                            <input type="checkbox" id="recursoTecnico" name="recursoTecnico">Recurso Tecnico
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-7" style="display:none;" id="div_tecnico">
+                                    <div class="form-group">
+                                        <input type="text" name="detalleRecursoTecnico" id="detalleRecursoTecnico" class="form-control" placeholder="recurso tecnico(obligatorio)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="checkbox">
+                                        <label for="recursoFinanciero">
+                                            <input type="checkbox" id="recursoFinanciero" name="recursoFinanciero">Recurso Financiero
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-7" style="display:none;" id="div_financiero">
+                                    <div class="form-group">
+                                        <input type="text" name="detalleRecursoFinanciero" id="detalleRecursoFinanciero" class="form-control" placeholder="recurso financiero(obligatorio)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="plazo" class="value_required">Plazo</label>
+                                <input type="date" name="plazo" id="plazo" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="responsable" class="value_required">Responsable</label>
+                                <select name="responsable" id="responsable" required class="form-control">
+                                    <option value="" selected disabled>-------------</option>
+                                    {% for persona in personal %}
+                                    <option value="{{ persona.id }}">{{ persona.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group" style="margin-top:25px;">
+                                <label for="">&nbsp;&nbsp;</label>
+                                <button type="button" class="btn btn-info btn-md btn-flat" onclick="agregarFila();"><i class="fa fa-plus-square-o"></i> Agregar Fila</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- GRID PLAN ACCION -->
+                    <table id="grid_plan_accion"></table>
+                    <div id="pager_plan_accion" class="text-black"></div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="color:red;">*Campos Obligatorios </label>
+                        </div>
+                    </div>
+                    
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="confirmarGrabarplanAccion();">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+
+
+    <!-- MODAL EDITAR PLAN ACCION -->
+    <div class="modal fade" id="modalEditarPlanAccion" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="#" id="form_editarPlanAccion">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green" id="span_editarPlanAccion"></span></h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="id_plan">
+                    <div class="form-group">
+                        <label for="Plan" class="value_required">Plan de Acción</label>
+                        <textarea name="plan_accion" id="plan_accion" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group" class="value_required">
+                        <label for="plazo">Plazo:</label>
+                        <input type="date" id="plazo" name="plazo" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="Responsable" class="value_required">Responsable:</label>
+                        <select name="responsable" id="responsable" class="form-control">
+                            {% for colaborador in personal  %}
+                                <option value="{{ colaborador.id }}">{{ colaborador.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="confirmarActualizarplanAccion();">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!--MODAL SAC-->
+    <div class="modal fade" id="modalSac" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/reporteSac" id="form_sac" method="POST">
+                {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">GENERAR SAC</span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="form-group">
+                    <label for="SAC" class="value_required">Número de SAC:</label>
+                    <select name="numero_sac" id="numero_sac" class="form-control"> 
+                    {% for sac in sacs  %}
+                        <option value="{{sac.id}}">{{sac.id}}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-file-pdf-o">&nbsp;Generar PDF</i>
+                </button>
+                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                    <i class="fa fa-close">&nbsp; Salir</i> 
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+    </div>
+
+
+
+     <!-- MODAL para las  observaciones -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalHallazgo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title"><span class="badge">Detalle</span></h5>
+                </div>
+                <div class="modal-body">
+                    <form id="form_hallazgo">
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Detalle:</label>
+                            <textarea id="descripcion" class="form-control" placeholder="Detalle" maxlength="100" readonly></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETALLE PLAN ACCION -->
+    <div class="modal fade" id="modalDetallePlanAccion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Plan Acción</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="detallePlanAccion">Plan Acción</label>
+                <textarea name="detallePlanAccion" id="detallePlanAccion" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!--Fin Contenido de la Pagina -->
+    </section>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!--JQUERY -UI DATAPICKER 
+<script src="{% static 'jquery-ui/jquery-1.12.4.js' %}"></script>
+<script src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+-->
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+
+
+
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+
+
+
+
+
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- DATATABLES JS-->
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+<!-- CKEDITOR JS-->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+
+
+<!-- INDEX JS -->
+<script src="{% static 'module/jefe/jefe.js' %}"></script>
+</body>
+<style type="text/css">
+    .myAltRowClass { background-color: #BBF3E1; background-image: none; }
+fieldset.scheduler-border {
+    border: 1px groove #ddd !important;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+legend.scheduler-border {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    width:auto;
+    padding:0 10px;
+    border-bottom:none;
+}
+
+</style >
+</html>

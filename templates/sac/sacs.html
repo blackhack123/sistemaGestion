@@ -1,0 +1,980 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+
+{% include "encabezado.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+      {% include "menu.html" %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                    <li>
+                    <a href="javascript:void(0)"><i class="fa fa-clone"></i>&nbsp;&nbsp;SAC</a>
+                    </li>
+                    <li class="active">
+                        Administrar SAC
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--Contenido de la Pagina -->
+
+
+    <!--CONTENIDO DE PAGINA -->
+    <div class="row" style="margin-bottom:15px; margin-top:-15px;">
+        <!--
+        <div class="col-md-2">
+            <button type="button" class="btn btn-primary btn-block btn-xs" data-toggle="modal" onclick="abrirmodalCrearSac();">
+             <i class="fa fa-plus"> Crear SAC</i>
+            </button>
+        </div>
+        -->
+        <div class="col-md-2">
+            <a href="#" class="btn btn-success btn-block btn-xs" onclick="modalAprobarPlan();">
+                <i class="fa fa-check-square-o">&nbsp;&nbsp;Aprobar Plan</i>
+            </a> 
+        </div>
+        <div class="col-md-2">
+                <a href="#" class="btn btn-info btn-block btn-xs" onclick="modalCierre();">
+                    <i class="fa fa-check-square-o">&nbsp;&nbsp;Establecer Cierre</i>
+                </a> 
+        </div>
+        <!-- GENERAR INFORME DE AUDITORIA -->
+        <div class="col-md-2">
+                <a href="#" class="btn btn-danger btn-block btn-xs" onclick="modalNumeroAuditoria();" id="pdf">
+                    <i class="fa fa-file-pdf-o">&nbsp;&nbsp;Generar Informe</i>
+                </a> 
+        </div>
+        <!-- GENERAR SAC -->
+        <div class="col-md-2">
+            <a href="javascript:void(0)" class="btn btn-danger btn-block btn-xs" onclick="cargarModalSac();" id="pdf">
+                <i class="fa fa-file-pdf-o">&nbsp;&nbsp;Generar SAC</i>
+            </a> 
+        </div>
+    </div>
+
+    <!-- SACS -->
+    <div style="widows: 100px; overflow:auto;">
+    <table id="gridSacs"></table>
+    </div>
+    <div id="pagerSacs" style="color:black;"></div>
+
+
+    <!-- APROBAR /OBSERVACIONES CABECERA SAC -->
+    <div class="modal fade" id="modalCabeceraSac" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <form action="#" id="form_cabeceraSac">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title" id="exampleModalLabel"><strong>ESTADO SAC AUDITOR</strong></h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="estado_cabecera" class="value_required">Número de SAC:</label>
+                        <input type="text" id="id_sac" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado_cabecera" class="value_required">Estado:</label>
+                        <select name="estado_cabecera" id="estado_cabecera" class="form-control" onchange="mostrarObservaciones($(this).val());">
+                            <option value="2">Cambios Sugeridos</option>
+                            <option value="1" selected>Aprobado</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="div_observacion" style="display:none">
+                            <label for="Observacion" class="value_required">Observación:</label>
+                            <textarea name="observacion" id="observacion" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="confirmarGrabarSacAuditor();">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- APROBAR /OBSERVACIONES SAC JEFE -->
+    <div class="modal fade" id="modalSacJefe" tabindex="-1" role="dialog" aria-labelledby="modalSacJefe" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <form action="#" id="form_sacJefe">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title" id="exampleModalLabel"><strong>ESTADO SAC DIRECTOR</strong></h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="estado_cabecera" class="value_required">Número de SAC:</label>
+                        <input type="text" id="sac_id" name="sac_id" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado_cabecera" class="value_required">Estado:</label>
+                        <select name="estado_director" id="estado_director" class="form-control" onchange="mostrarObservacionesJefe($(this).val());">
+                            <option value="5" selected>Aprobado</option>
+                            <option value="4">Cambios Sugeridos</option>
+
+                        </select>
+                    </div>
+                    <div class="form-group" id="div_observacion_jefe" style="display:none">
+                            <label for="Observacion" class="value_required">Observación:</label>
+                            <textarea name="observacion_director" id="observacion_director" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"  onclick="javascript:confirmarGrabarSacJefe();">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i>
+                    </button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+        <!-- MODAL PLAN ACCION -->
+        <div class="modal fade" id="planAccion" name="planAccion" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-window-close"></i>
+                    </button>
+                    <h4 class="modal-title"><span class="badge bg-green" id="span_estado_seguimiento"></span></h4>
+                </div>
+                
+                <div class="modal-body">
+                    <input type="hidden" id="idSac" name="idSac">
+                    <input type="hidden" id="id_plan" name="id_plan">
+                    <div class="form-group">
+                        <label for="Detalle">Detalle del Plan de Acción:</label>
+                        <textarea name="detalle_plan_accion" id="detalle_plan_accion" class="form-control" readonly></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="fecha" >Plazo:</label>
+                                <input type="date" id="fecha_plan_accion" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Jefe" >Responsable:</label>
+                                <select name="responsable" id="responsable" class="form-control" disabled>
+                                    <option selected disabled>Seleccione:</option>
+                                    {% for personal in personal %}
+                                        <option value="{{personal.id}}">{{personal.nombre}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div><!-- END ROW -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Jefe" class="value_required">Responsable de seguimiento:</label>
+                                <select name="responsable_seguimiento" id="responsable_seguimiento" class="form-control">
+                                    <option selected disabled>Seleccione:</option>
+                                        {% for personal in personal %}
+                                            <option value="{{personal.id}}">{{personal.nombre}}</option>
+                                        {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Fecha" class="value_required">Fecha de seguimiento:</label>
+                                <input type="date" class="form-control" id="fecha_seguimiento" onclick="validar_fecha();">
+                            </div>
+                        </div>
+                    </div><!-- END ROW -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="confirmarGrabarPlanAccion();">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <!-- pull-left determina posicion-->
+                    <button type="button" class="btn btn-danger " data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- MODAL APROBAR PLAN ACCION -->
+        <div class="modal" tabindex="-1" role="dialog" id="aprobacion_plan_accion">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-window-close"></i>
+                        </button>
+                        <h4 class="modal-title"><strong>Aprobacion Plan Acción</strong> </h4>
+                    </div>
+                    <div class="modal-body">
+                    <form id="form_aprobacion_plan_accion">
+                        <input type="hidden" id="id_sac">
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Estado:</label>
+                            <select id="estado_aprobacion_plan_accion" class="form-control" onchange="mostrar_div_observaciones($(this).val());"> 
+                                <option disabled selected>Seleccione:</option>
+                                <option value="1">Aprobado</option>
+                                <option value="2">Por Corregir</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="div_observaciones_plan_accion" style="display:none;">
+                            <label for="Observaciones">Observaciones:</label>
+                            <textarea id="observacion_plan_accion" class="form-control" required></textarea>
+                        </div>
+                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="grabarAprobacionPlanAccion();">
+                            <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                        </button>
+                        <button type="button" class="btn btn-danger " data-dismiss="modal">
+                            <i class="fa fa-close">&nbsp; Salir</i> 
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--MODAL APROBAR SEGUIMIENTO -->
+        <div class="modal fade" id="modalAprobarSeguimiento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title"><span class="badge bg-green">APROBAR SEGUIMIENTO</span></h5>
+                    </div>
+                    <div class="modal-body">
+                    <form action="#" id="form_estadoSeguimiento">
+                        <input type="hidden" id="id_plan">
+                        <div class="form-group">
+                            <label for="Aprobar" class="value_required">Aprobar Seguimiento:</label>
+                            <select class="form-control" id="estado_seguimiento" onchange="javascript:mostrar_div_observaciones_seguimiento($(this).val());">
+                                <option value="1">Aprobado</option>
+                                <option value="2">Observaciones</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="div_observaciones_seguimiento" style="display:none">
+                            <label for="Observaciones" class="value_required">Observaciones:</label>
+                            <textarea name="observaciones_seguimiento" id="observaciones_seguimiento" class="form-control"></textarea>
+                        </div>
+                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="grabar_seguimiento();"><i class="fa fa-check-square-o"></i> Grabar Datos</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- MODAL APROBAR PLAN-->
+        <div class="modal fade" id="modal_estadoPlan" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title"><span class="badge bg-green">APROBAR PLAN DE ACCIÓN</span></h5>
+                    </div>
+                    <div class="modal-body">
+                        <form action="#" id="form_estado_plan">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="SAC" class="value_required">Seleccione la SAC:</label>
+                                    <select name="numero_sac" id="numero_sac" class="form-control">
+                                        <option selected disabled>Seleccione:</option>
+                                        {% for sac in sacs %}
+                                            <option value="{{ sac.id}}">{{sac.id}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="Estado" class="value_required">Estado:</label>
+                                    <select name="estado_plan_accion" id="estado_plan_accion" class="form-control" onchange="mostrarObservacionesEstadoPlan($(this).val());">
+                                        <option value="1">Aprobado</option>
+                                        <option value="0">Por Corregir</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!-- END ROW -->
+                        <div class="form-group" id="div_observaciones_estado" style="display:none;">
+                            <label for="Observaciones" class="value_required">Observaciones:</label>
+                            <textarea name="observaciones_plan" id="observaciones_plan" class="form-control"></textarea>
+                        </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="javascript:grabar_estado_planAccion();"><i class="fa fa-check-square-o"></i> Grabar Datos</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL CIERRE SAC -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="modalCierreSac">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title"><span class="badge bg-green">CIERRE DE LA SAC</span></h5>
+            </div>
+            <div class="modal-body">
+                <form id="form_cierre_sac">
+                    <div class="form-group">
+                        <label for="SAC" class="value_required">Seleccione la SAC:</label>
+                        <select name="numero_sac" id="numero_sac" class="form-control">
+                            <option selected disabled>Seleccione:</option>
+                            {% for sac in sacs %}
+                                <option value="{{ sac.id}}">{{sac.id}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Estado" class="value_required">Estado:</label>
+                        <select name="estado_cierre" id="estado_cierre" class="form-control">
+                            <option disabled selected>Seleccione:</option>
+                            <option value="1">Implementada y Efectiva</option>
+                            <option value="2">Implementada y No Efectiva</option>
+                            <option value="3">No Implementada</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="javascript:grabar_cierre();"><i class="fa fa-check-square-o"></i> Grabar Datos</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+            </div>
+            </div>
+        </div>
+        </div>
+
+
+
+        <!-- MODAL SELECCION AUDITORIA PARA GENERAR REPORTE SAC PDF -->
+        <div class="modal fade" id="modalNumeroAuditoria" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form  id="form_informeAuditoria">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">GENERAR INFORME DE AUDITORÍA</span> </h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                        <label for="Auditoria" class="value_required">Número de Auditoría:</label>
+                        <select name="numero_auditoria" id="numero_auditoria" class="form-control">
+                            {% for auditoria in auditorias %}
+                            <option value="{{ auditoria.numero_auditoria }}">{{ auditoria.numero_auditoria }}</option>
+                            {% endfor%}
+                        </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="getData();">
+                            <i class="fa fa-check-square-o">&nbsp;Aceptar</i>
+                        </button>
+                        <button type="button" class="btn btn-danger " data-dismiss="modal">
+                            <i class="fa fa-close">&nbsp; Salir</i> 
+                        </button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+              <!--MODAL CREAR INFORME -->
+            <div class="modal fade" id="modalCrearInforme" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <form action="/pdfInformeAuditoria" method="POST">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h5 class="modal-title" ><span class="badge bg-green">GENERAR INFORME DE AUDITORÍA</span> </h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                            <textarea name="informe_auditoria" id="informe_auditoria" style="heigth:800px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-file-pdf-o">&nbsp;Generar PDF</i>
+                            </button>
+                            <button type="button" class="btn btn-danger " data-dismiss="modal">
+                                <i class="fa fa-close">&nbsp; Salir</i> 
+                            </button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- MODAL SAC -->
+            <div class="modal fade" id="modalSac" tabindex="-1" role="dialog"  aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form action="/reporteSac" id="form_sac" method="POST">
+                            {% csrf_token %}
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">GENERAR SAC</span></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                           
+                            <div class="form-group">
+                                <label for="SAC" class="value_required">Número de SAC:</label>
+                                <select name="numero_sac" id="numero_sac" class="form-control"> 
+                                {% for sac in sacs  %}
+                                    <option value="{{sac.id}}">{{sac.id}}</option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                           
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-file-pdf-o">&nbsp;Generar PDF</i>
+                            </button>
+                            <button type="button" class="btn btn-danger " data-dismiss="modal">
+                                <i class="fa fa-close">&nbsp; Salir</i> 
+                            </button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+     <!-- MODAL para las  observaciones -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalHallazgo">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title"><span class="badge bg-green">Detalle </span></h5>
+        </div>
+        <div class="modal-body">
+            <form id="form_hallazgo">
+                <div class="form-group">
+                    <label for="Estado" class="value_required">Detalle:</label>
+                    <textarea id="descripcion" class="form-control" placeholder="Detalle" maxlength="100" readonly rows="6"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+
+     <!-- MODAL APROBAR PLAN COLABORADOR  -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalPlanColaborador">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title"><span class="badge bg-green">Aprobar Plan Colaborador</span></h5>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <input type="hidden" id="id_plan_colaborador">
+                <label for="Detalle" class="value_required">Estado:</label>
+                <select id="estado_plan_colaborador" name="estado_plan_colaborador" class="form-control" onchange="mostrar_observacionesPlan($(this).val());">
+                    <option value="1">Aprobado</option>
+                    <option value="2">Observaciones</option>
+                </select>
+            </div>
+            <div class="form-group" id="div_observaciones_plan_colaborador" style="display:none">
+                <label for="Observaciones" class="value_required">Observaciones:</label>
+                <textarea name="observaciones_plan_colaborador" id="observaciones_plan_colaborador" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="confirmarGrabarPlanColaborador();"><i class="fa fa-check-square-o"></i> Grabar Datos</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+<!-- MODAL CREAR SAC POR MEJORAMIENTO -->
+<div class="modal fade" id="modalCrearSac" tabindex="-1" role="dialog" aria-labelledby="#modalCrearSac" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    <form id="form_crearsac">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fa fa-window-close"></i></span>
+        </button>
+        <h5 class="modal-title" id="modalCrearSac"><span class="badge bg-green">SAC</span> </h5>
+      </div>
+      <div class="modal-body">
+          <div class="row">
+              <div class="col-sm-4">
+                  <div class="form-group">
+                      <label for="Proceso" class="value_required">Proceso</label>
+                      <select name="proceso" id="proceso" class="form-control input-sm" onchange="javascript:cargarProcesos($(this).val());">
+                          <option selected disabled>Seleccione:</option>
+                          {%for area in areas %}
+                          <option value="{{ area.id }}">{{ area.area }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+              </div>
+              <div class="col-sm-4">
+                  <div class="form-group">
+                      <label for="responsable" class="value_required">Responsable:</label>
+                      <select name="responsable" id="responsable" class="form-control input-sm" aria-disabled="true" disabled>
+                          <option selected disabled>Seleccione:</option>
+                          {%for colaborador in personal %}
+                          <option value="{{ colaborador.id }}">{{ colaborador.nombre }} &nbsp;-&nbsp;{{ colaborador.id_cargo }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+              </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                      <label for="solicitante" class="value_required">Solicitante:</label>
+                      <select name="solicitante" id="solicitante" class="form-control input-sm">
+                          <option selected disabled>Seleccione:</option>
+                          {%for colaborador in personal %}
+                          <option value="{{ colaborador.id }}">{{ colaborador.nombre }} &nbsp;-&nbsp;{{ colaborador.id_cargo }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-4">
+                  <label for="fecha" class="value_required">Fecha:</label>
+                  <div class="input-group date " data-provide="datepicker">
+                      <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                      </div>
+                      <input class="form-control input-sm" id="fecha" type="date" onclick="validar_fecha(this);">
+                  </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="criticidad">Criticidad</label>
+                    <select id="criticidad" name="criticidad" class="form-control input-sm">
+                      <option selected disabled>Seleccione</option>
+                      <option value="Mayor">Mayor</option>
+                      <option value="Menor">Menor</option>
+                      <option value="Critico">Critico</option>
+                    </select>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                  <div class="form-group">
+                      <label for="tipo" class="value_required">Tipo:</label>
+                      <select name="tipo_sac" id="tipo_sac" class="form-control">
+                          <option selected disabled>Seleccione:</option>
+                          <option value="1">Mejoramiento</option>
+                          <option value="2">Sugerencia</option>
+                      </select>
+                  </div>
+              </div>
+          </div>
+          <div class="form-group">
+              <label for="descripcion" class="value_required">Descripción del hallazgo o la no conformidad:</label>
+              <textarea name="descripcion_hallazgo" id="descripcion_hallazgo"></textarea>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="grabarSac();"><i class="fa fa-check-square-o" > Grabar</i></button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"> Salir</i></button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<!-- CKEDITOR JS-->
+<script src="{% static 'adminLTE/bower_components/ckeditor/ckeditor.js' %}"></script>
+<!-- SWEET ALERT -->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<!-- INDEX JS -->
+<script src="{% static 'module/sac/sacs.js' %}"></script>
+<script>
+
+    function mostrar_div_observaciones_seguimiento(id_estado){
+    
+        if(id_estado=="2"){
+            $("#div_observaciones_seguimiento").show();
+        }else{
+            $("#div_observaciones_seguimiento").hide();
+        }
+    }//end function mostrar_div_observaciones
+
+
+    function grabar_seguimiento(){
+        
+        var id_plan = $("#modalAprobarSeguimiento #id_plan").val();
+        var estado = $("#modalAprobarSeguimiento #estado_seguimiento").val();
+        if(estado=='2'){
+            var observaciones = $("#modalAprobarSeguimiento #observaciones_seguimiento").val();
+            if (observaciones=="" || observaciones== null){
+                swal("Ingrese una observacion", "", "warning");
+                return false;
+            }
+        }else{
+            var observaciones = null;
+        }//end if
+        
+        swal({
+            title: "Desea grabar los Datos ?",
+            icon: "info",
+            buttons: ['NO', 'SI'],
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                
+                //token
+                var csrftoken = getCookie('csrftoken');
+
+                $.ajax({
+                    type: "POST",
+                    url: "/setEstadoSeguimiento/",
+                    data:{
+                        csrfmiddlewaretoken : csrftoken, 
+                        id_plan:id_plan,
+                        estado:estado,
+                        observaciones:observaciones
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        var codigo  = data.resultado;
+                        var mensaje = data.mensaje;
+                        if (codigo == "ok_update"){
+                            //mensaje ok update
+                            swal(mensaje, "", "success");
+                            //ocultar Modal
+                            $('#modalAprobarSeguimiento').modal('hide');
+                            //recargar pagina
+                            location.reload();
+                        }
+                    },
+                    error: function( jqXHR, textStatus, errorThrown ) {
+
+                        if (jqXHR.status === 0) {
+
+                            swal('Not connect: Verify Network.', "", "error");
+
+                        } else if (jqXHR.status == 404) {
+
+                            swal('Requested page not found [404]', "", "error");
+
+                        } else if (jqXHR.status == 500) {
+
+                            swal('Internal Server Error [500]', "", "error");
+
+                        } else if (textStatus === 'parsererror') {
+
+                            swal('Requested JSON parse failed.', "", "error");
+                
+                        } else if (textStatus === 'timeout') {
+
+                            swal('Time out error', "", "error");
+                
+                        } else if (textStatus === 'abort') {
+                            swal('Ajax request aborted.', "", "error");
+                
+                        } else {
+                            swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+                
+                        }//end if 
+
+                    }//end error
+                }); 
+            }
+        });
+
+    }//end function grabar_seguimiento
+
+
+    function modalAprobarPlan(){
+        
+        document.getElementById('form_estado_plan').reset();
+        
+        $("#div_observaciones_estado").hide();
+        //mostrar modal 
+        $("#modal_estadoPlan").modal('show');
+
+    }//end function modal_estadoPlan
+
+
+    function mostrarObservacionesEstadoPlan(id_estado){
+
+        if(id_estado==1){
+            $("#div_observaciones_estado").hide();
+        }else{
+            $("#div_observaciones_estado").show();
+        }
+
+    }//end function mostrarObservacionesEstadoPlan
+
+
+    function grabar_estado_planAccion(){
+        
+        var numero_sac = $("#modal_estadoPlan #numero_sac").val();
+        if(numero_sac=="" || numero_sac==null){
+            swal("Seleccione la SAC !!", "", "warning");
+            return false;
+        }//end if
+        var estado_plan_accion = $("#modal_estadoPlan #estado_plan_accion").val();
+        if(estado_plan_accion==0){
+            observaciones = $("#modal_estadoPlan #observaciones_plan").val();
+            if(observaciones =="" || observaciones==null){
+                swal("Ingrese la Observacion !!", "", "warning");
+                return false;
+            }
+        }else{
+            observaciones=null;
+        }
+
+
+        swal({
+            title: "Desea grabar los Datos ?",
+            icon: "info",
+            buttons: ['NO', 'SI'],
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                //token
+                var csrftoken = getCookie('csrftoken');
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/setEstPlanAccion/",
+                    data:{
+                        csrfmiddlewaretoken : csrftoken, 
+                        numero_sac:numero_sac,
+                        estado_plan_accion:estado_plan_accion,
+                        observaciones:observaciones
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        var codigo  = data.resultado;
+                        var mensaje = data.mensaje;
+                        if (codigo == "ok_update"){
+
+                            //mensaje ok update
+                            swal(mensaje, "", "success");
+                            //ocultar Modal
+                            $('#modal_estadoPlan').modal('hide');
+                            //recargar pagina
+                            location.reload();
+                        }
+                    },
+                    error: function( jqXHR, textStatus, errorThrown ) {
+
+                        if (jqXHR.status === 0) {
+
+                            swal('Not connect: Verify Network.', "", "error");
+
+                        } else if (jqXHR.status == 404) {
+
+                            swal('Requested page not found [404]', "", "error");
+
+                        } else if (jqXHR.status == 500) {
+
+                            swal('Internal Server Error [500]', "", "error");
+
+                        } else if (textStatus === 'parsererror') {
+
+                            swal('Requested JSON parse failed.', "", "error");
+                
+                        } else if (textStatus === 'timeout') {
+
+                            swal('Time out error', "", "error");
+                
+                        } else if (textStatus === 'abort') {
+                            swal('Ajax request aborted.', "", "error");
+                
+                        } else {
+                            swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+                
+                        }//end if 
+
+                    }//end error
+                }); 
+            }
+        });
+
+    }//end function grabar_estado_planAccion
+
+
+    function modalCierre(){
+
+        //reset form
+        document.getElementById('form_cierre_sac').reset();
+        
+        //mostrar modal
+        $("#modalCierreSac").modal('show');
+
+    }//end function modalCierre
+
+   function validar_fecha() {
+
+        //input validado
+        var input = document.getElementById("fecha");
+
+        var today = new Date();
+        // Set month and day to string to add leading 0
+        var day = new String(today.getDate());
+        var mon = new String(today.getMonth()+1); //January is 0!
+        var yr = today.getFullYear();
+
+          if(day.length < 2) { day = "0" + day; }
+          if(mon.length < 2) { mon = "0" + mon; }
+
+          var date = new String( yr + '-' + mon + '-' + day );
+
+        input.disabled = false;
+        input.setAttribute('min', date);
+
+    }//end function validar_fecha
+
+</script>
+<style type="text/css">
+    .myAltRowClass { background-color: #BBF3E1; background-image: none; }
+</style >
+</body>
+</html>

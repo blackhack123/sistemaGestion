@@ -1,0 +1,208 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<!--SE SEPARA EL HEAD PARA MEJORAR EL RENDIMIENTO DE CARGA -->
+{% include "head.html" %}
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+{% include "jefeArea/encabezadoJefe.html" %}
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="{% static 'adminLTE/dist/img/user-icon.png' %}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>{{ request.session.nombreUsuario }}</p>
+                <!-- Status -->
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- MENU UNIFICADO -->
+        {% include 'user/menu.html' %}
+    </section>
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="row">
+            <div class="col-md-5">
+                <ol class="breadcrumb">
+                    <li>
+                      <a href="javascript:void(0)"><i class="fa fa-folder-open-o"></i> Gestion Documental</a>
+                    </li>
+                    <li class="active">
+                     Estado Documentación
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- SECCION CONTENIDO DE LA PAGINA -->
+    <section class="content container-fluid">
+    <div class="row" style="margin-top:-15px;">
+        <!-- INPUT BUSCAR -->
+        <div class="col-md-3">
+            <input id="search_cells" type="text" class="form-control input-sm" placeholder="Buscar.."/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div style="widows: 100px; overflow:auto;">
+            <table id="gridEstadoDocumentacion"></table>
+            </div>
+            <div id="pageGridEstadoDocumentacion" style="color:black"></div>
+        </div>
+    </div>
+
+
+
+    <!--MODAL ESTADO DOCUMENTO ENCARGADO -->
+    <div class="modal fade" id="modalEstadoDocumento" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <form id="form_estado_documento" name="form_estado_documento" action="/updateDocJefe" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-window-close"></i>
+                    </button>
+                    <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">Estado del Documento</span></h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id_revision" id="id_revision">
+                    <input type="hidden" name="id_documento" id="id_documento">
+                    
+                    <!-- ESTADO DOCUMENTO -->
+                    <div class="form-group">
+                        <label for="Estado" class="value_required">Estado:</label>
+                        <select id="estado_documento" name="estado_documento" class="form-control" required onchange="javascript:mostrarObservaciones($(this).val());" >
+                            <option selected disabled>Seleccione:</option>
+                            <option value="3">Aprobado</option>
+                            <option value="2">Observaciones</option>
+                        </select>
+                    </div>
+
+                    <!-- OBSERVACIONES PARA EL COLABORADOR -->
+                    <div class="form-group" style="display:none;" id="div_observaciones">
+                        <label for="Observaciones" class="value_required">Observaciones:</label>
+                        <textarea id="observaciones_documento" name="observaciones_documento" class="form-control"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-check-square-o">&nbsp;Grabar Datos</i>
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="fa fa-close">&nbsp; Salir</i> 
+                    </button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+
+             <!-- MODAL para las  observaciones -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalHallazgo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title"><span class="badge">Detalle</span></h5>
+                </div>
+                <div class="modal-body">
+                    <form id="form_hallazgo">
+                        <div class="form-group">
+                            <label for="Estado" class="value_required">Detalle:</label>
+                            <textarea id="descripcion" class="form-control" placeholder="Detalle" maxlength="100" readonly></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- Default to the left
+    <strong>RG-ManagementCorp</strong>
+     -->
+    <img src="{% static 'images/rg/logo.jpg' %}" class="img-fluid" style="height: 50px; width: 25%; display: block;">
+  </footer>
+
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg">
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'adminLTE/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminLTE/dist/js/adminlte.min.js' %}"></script>
+<!-- CARGANDO JQGRID REQUIERE jquery-3.2.1.js-->
+<script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
+<link href="{% static 'jqgrid/css/ui.jqgrid.css' %}" rel="stylesheet">
+<link href="{% static 'jqgrid/css/jquery-ui.css' %}" rel="stylesheet">
+
+<!-- DATATABLES JS
+<link rel="stylesheet" href="{% static 'DataTables/dataTables.min.css' %}">
+<script src="{% static 'DataTables/dataTables.min.js' %}"></script>
+-->
+<!-- CARGA LIBRERIAS/FUNCIONES EXTERNAS-->
+<script src="{% static 'sweetAlert/sweetalert.js' %}"></script>
+<script src="{% static 'module/validaciones.js' %}"></script>
+<script src="{% static 'module/jefe/estadoDocumentacion.js' %}"></script>
+<!--
+<script src="{% static 'module/jefe/jefe.js' %}"></script>
+-->
+</body>
+</html>

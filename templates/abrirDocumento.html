@@ -1,0 +1,124 @@
+{% load staticfiles %}
+    <!-- modal tipo apertura de archivo -->
+    <div class="modal fade" id="modalPermisos" tabindex="-1" role="dialog" aria-labelledby="modalPermisos" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+              <h5 class="modal-title" id="exampleModalLabel"><span class="badge bg-green">TIPO DE APERTURA</span></h5>
+          </div>
+          <div class="modal-body">
+              <input type="hidden" id="documento" name="documento">
+              <div class="row">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-10">
+                      <table class="table table-bordered">
+                          <tbody>
+                          <tr>
+                              <td class="success">Abrir Modo Lectura(pdf)</td>
+                              <td class="success">Abrir Editable(docx, xlsx)</td>
+                          </tr>
+                          <tr>
+                              <td class="text-center">
+                                {% if request.session.permiso_lectura == 'on' %}
+                                <!-- ABRIR FORMATO PDF -->
+                                    <button type="button" class="btn btn-danger btn-flat btn-sm" onclick="abrirPdf();" id="permiso_lectura">
+                                      <i class="fa fa-eye"></i> Abrir PDF
+                                    </button>
+                                {% else %}
+                                  <span class="badge bg-yellow">Sin Permisos</span>
+                               {% endif %}
+                              </td>
+                              <td class="text-center">
+                                {% if request.session.permiso_escritura == 'on' %}
+                                  <button type="button" class="btn btn-info btn-flat btn-sm" id="permiso_escritura" onclick="abrirEditable();">
+                                    <i class="fa fa-pencil text-orange"></i> Abrir Editable
+                                  </button>
+                                {% else %}
+                                  <span class="badge bg-yellow">Sin Permisos</span>
+                                {% endif %}
+                              </td>
+                          </tr>
+                          </tbody>
+                      </table>
+                  </div>
+                  <div class="col-md-1"></div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<script>
+
+    function abrirPdf(){
+
+        //ruta documento
+        var path_documento = $("#modalPermisos #documento").val();
+
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+            type: "POST",
+            url: "/convertdoc_topdf/",
+            data:{
+                csrfmiddlewaretoken : csrftoken,
+                path_documento:path_documento,
+            },
+            dataType: "json",
+            success: function(data) {
+                if (data.resultado == 'ok_convert'){
+                    path = "media/Convertidos/lectura.pdf";
+                    window.open(path, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+                }
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+
+                if (jqXHR.status === 0) {
+
+                    swal('Not connect: Verify Network.', "", "error");
+
+                } else if (jqXHR.status == 404) {
+
+                    swal('Requested page not found [404]', "", "error");
+
+                } else if (jqXHR.status == 500) {
+
+                    swal('Internal Server Error [500]', "", "error");
+
+                } else if (textStatus === 'parsererror') {
+
+                    swal('Requested JSON parse failed.', "", "error");
+
+                } else if (textStatus === 'timeout') {
+
+                    swal('Time out error', "", "error");
+
+                } else if (textStatus === 'abort') {
+                    swal('Ajax request aborted.', "", "error");
+
+                } else {
+                    swal('Uncaught Error: ' + jqXHR.responseText, "", "error");
+
+                }//end if
+
+            }//end error
+        });
+
+    }//end function abrirPdf
+
+    function abrirEditable(){
+
+        //ruta documento
+        var path_documento = $("#modalPermisos #documento").val();
+
+        //abrir archivo seleccionado
+        window.open(path_documento, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+
+    }//end function abrirEditable
+</script>
